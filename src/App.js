@@ -13,7 +13,7 @@ function App () {
     <ThemeProvider theme={darkTheme}>
       <CssBaseline/>
       <Box display="flex">
-        Ciao
+        Ciao2
       </Box>
     </ThemeProvider>
   )
