@@ -1,13 +1,29 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import { Box, Button, Typography } from '@mui/material'
+import moment from 'moment'
+
+function manageDate (date) {
+  return moment(date.replace(' CEST', ''), 'DD/MM/YYYY HH:mm').format('dddd DD/MM HH:mm')
+}
 
 const Home = () => {
   const [page, setPage] = useState('0')
-  const { isPending, data } = useQuery({
+  const [initPage, setInitPage] = useState('')
+  const { isPending, data, isSuccess } = useQuery({
     queryKey: [`calendar/${page}`],
     placeholderData: keepPreviousData,
+    staleTime: 300000,
   })
+  useEffect(() => {
+    if (!initPage && isSuccess) {
+      const general = data?.results?.callbacks?.general || []
+      const [first] = general
+      const value = first?.params?.value
+      setInitPage(value.match(/\d+/)[0])
+    }
+  }, [data, initPage, isSuccess])
+  console.log('initPage:', initPage)
   if (isPending) {return null}
   const list = data?.results?.list || []
   const general = data?.results?.callbacks?.general || []
@@ -19,11 +35,13 @@ const Home = () => {
   return (
     <Box sx={{ padding: 0 }}>
       <Box display="flex" justifyContent="space-between" sx={{ marginTop: 2 }}>
-        <Button size="small" onClick={() => setPage(prev)} disabled={!prev}>Precedente</Button>
+        <Button size="small" onClick={() => setPage(prev === initPage ? '0' : prev)}
+                disabled={!prev}>Precedente</Button>
         <Typography variant="h6" sx={{ textAlign: 'center', marginBottom: 2 }}>
           {first?.params?.value}
         </Typography>
-        <Button size="small" onClick={() => setPage(next)} disabled={!next}>Successivo</Button>
+        <Button size="small" onClick={() => setPage(next === initPage ? '0' : next)}
+                disabled={!next}>Successivo</Button>
       </Box>
       <Box>
         {list.map((match, index) => (
@@ -32,8 +50,9 @@ const Home = () => {
             <Typography sx={{ minWidth: '250px', textAlign: 'right' }}>{match['teamAName']}</Typography>
             <Typography>{match.separator}</Typography>
             <Typography sx={{ minWidth: '250px', textAlign: 'left' }}>{match['teamBName']}</Typography>
+            <Typography sx={{ minWidth: '250px', textAlign: 'left' }}>{match['referee']}</Typography>
             <Typography sx={{ minWidth: '200px', textAlign: 'right', fontStyle: 'italic', color: '#4caf50' }}>
-              {match.data.replace(' CEST', '')}
+              {manageDate(match.data)}
             </Typography>
           </Box>
         ))}
