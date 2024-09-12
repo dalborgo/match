@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
-import { keepPreviousData, useQuery, useQueryClient } from '@tanstack/react-query'
+import { Link as RouterLink } from 'react-router-dom'
+import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import { Box, Button, Link, Typography } from '@mui/material'
 import moment from 'moment'
 import { getSection } from '../files'
@@ -9,12 +10,20 @@ function manageDate (date) {
   return moment(date.replace(' CEST', ''), 'DD/MM/YYYY HH:mm').format('dddd DD/MM HH:mm')
 }
 
+function getTeamIdCodes (rank) {
+  const output = {}
+  for (let table of rank) {
+    for (let item of table.items) {
+      output[item['teamName']] = item['teamId']
+    }
+  }
+  return output
+}
+
 const Home = () => {
-  const [, setState] = useState()
   const [page, setPage] = useState('0')
   const [rankOpen, setRankOpen] = useState(false)
   const [initPage, setInitPage] = useState('')
-  const queryClient = useQueryClient()
   const { isPending, data, isSuccess } = useQuery({
     queryKey: [`calendar/${page}`],
     placeholderData: keepPreviousData,
@@ -28,16 +37,18 @@ const Home = () => {
       setInitPage(value.match(/\d+/)[0])
     }
   }, [data, initPage, isSuccess])
-  useEffect(() => {
-    async function fetchData () {
-      await queryClient.prefetchQuery({
-        queryKey: ['rank'],
-      }, { throwOnError: true })
-    }
-    
-    fetchData().then().catch(error => {setState(() => {throw error})})
-  }, [queryClient])
+  /* useEffect(() => {
+     async function fetchData () {
+       await queryClient.prefetchQuery({
+         queryKey: ['rank'],
+       }, { throwOnError: true })
+     }
+     
+     fetchData().then().catch(error => {setState(() => {throw error})})
+   }, [queryClient])*/
   if (isPending) {return null}
+  const rank = data?.results?.rank || []
+  const teamIdCode = getTeamIdCodes(rank)
   const list = data?.results?.list || []
   const general = data?.results?.callbacks?.general || []
   const [first] = general
@@ -58,10 +69,23 @@ const Home = () => {
                   disabled={!next}>Successivo</Button>
         </Box>
         <Box>
-          {list.map((match, index) => (
+          {list.map((match, index) => console.log(match) || (
             <Box key={index} display="flex" justifyContent="space-between" alignItems="center"
                  sx={{ padding: 1, borderBottom: '1px solid #888888' }}>
-              <Typography sx={{ minWidth: '200px', textAlign: 'right' }}>{match['teamAName']}</Typography>
+              <Typography
+                color="inherit"
+                component={RouterLink}
+                to={`/team/${teamIdCode[match['teamBName']]}`}
+                sx={{
+                  textDecoration: 'none',
+                  '&:hover': {
+                    textDecoration: 'underline'
+                  },
+                  minWidth: '200px',
+                  textAlign: 'right'
+                }}>
+                {match['teamAName']}
+              </Typography>
               <Link
                 onClick={() => setRankOpen(true)}
                 sx={{
@@ -74,7 +98,20 @@ const Home = () => {
               >
                 <Typography sx={{ minWidth: '50px', textAlign: 'center' }}>{match.separator}</Typography>
               </Link>
-              <Typography sx={{ minWidth: '200px', textAlign: 'left' }}>{match['teamBName']}</Typography>
+              <Typography
+                color="inherit"
+                component={RouterLink}
+                to={`/team/${teamIdCode[match['teamBName']]}`}
+                sx={{
+                  textDecoration: 'none',
+                  '&:hover': {
+                    textDecoration: 'underline'
+                  },
+                  minWidth: '200px',
+                  textAlign: 'left'
+                }}>
+                {match['teamBName']}
+              </Typography>
               <Typography sx={{
                 minWidth: '350px',
                 textAlign: 'left'
