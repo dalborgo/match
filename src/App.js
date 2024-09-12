@@ -37,7 +37,7 @@ function App () {
       <QueryClientProvider client={queryClient}>
       <Router>
         <NavBar/>
-        <Box sx={{ padding: 2, paddingTop: 0 }}>
+        <Box sx={{ padding: 0, paddingTop: 0 }}>
           <Routes>
             <Route path="/" element={<Home/>}/>
             <Route path="/team/:id" element={<Team/>}/>

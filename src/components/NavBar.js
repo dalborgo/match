@@ -1,12 +1,13 @@
 import { Link, useLocation, useParams } from 'react-router-dom'
 import { AppBar, Box, Button, LinearProgress, Toolbar } from '@mui/material'
+import { useIsFetching } from '@tanstack/react-query'
 
-const NavBar = ({ isFetching }) => {
+const NavBar = () => {
   const location = useLocation()
+  const isFetching = useIsFetching()
   const { id } = useParams()
-  
   return (
-    <AppBar position="static" sx={{ position: 'relative' }}>
+    <AppBar position="fixed">
       <Toolbar variant="dense">
         <Box sx={{ flexGrow: 1 }}>
           <Button

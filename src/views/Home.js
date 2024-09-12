@@ -58,8 +58,14 @@ const Home = () => {
   const next = next_ ? next_.params.params['period'].split('_')[1] : null
   return (
     <>
-      <Box sx={{ padding: 0 }}>
-        <Box display="flex" justifyContent="space-between" sx={{ marginTop: 2 }}>
+      <Box
+        sx={{
+          height: 'calc(100vh - 65px)',
+          marginTop: '58px',
+          overflowY: 'auto',
+        }}
+      >
+        <Box display="flex" justifyContent="space-between" sx={{ margin: 2, marginBottom: 0 }}>
           <Button size="small" onClick={() => setPage(prev === initPage ? '0' : prev)}
                   disabled={!prev}>Precedente</Button>
           <Typography variant="h6" sx={{ textAlign: 'center', marginBottom: 2 }}>
@@ -69,7 +75,7 @@ const Home = () => {
                   disabled={!next}>Successivo</Button>
         </Box>
         <Box>
-          {list.map((match, index) => console.log(match) || (
+          {list.map((match, index) => (
             <Box key={index} display="flex" justifyContent="space-between" alignItems="center"
                  sx={{ padding: 1, borderBottom: '1px solid #888888' }}>
               <Typography

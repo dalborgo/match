@@ -1257,6 +1257,39 @@
   resolved "https://registry.yarnpkg.com/@csstools/selector-specificity/-/selector-specificity-2.2.0.tgz#2cbcf822bf3764c9658c4d2e568bd0c0cb748016"
   integrity sha512-+OJ9konv95ClSTOJCmMZqpd5+YGsB2S+x6w3E1oaM8UuR5j8nTNHYSz8c9BEPGDOCMQYIEEGlVPj/VY64iTbGw==
 
+"@devexpress/dx-core@4.0.9":
+  version "4.0.9"
+  resolved "https://registry.yarnpkg.com/@devexpress/dx-core/-/dx-core-4.0.9.tgz#eb8cd5dc06d21381aee36a1a266b263d62703fc9"
+  integrity sha512-jLMDL+dAWQ3LNRbCSyEDppSYlGs//MutqvjXXumaEksEvESqnC/epJQ7YLikgezD7BcIQo0fQJl0Xg94o1QyOQ==
+
+"@devexpress/dx-grid-core@4.0.9":
+  version "4.0.9"
+  resolved "https://registry.yarnpkg.com/@devexpress/dx-grid-core/-/dx-grid-core-4.0.9.tgz#9afcd615394a09689a1d58613fe66ad79af037b2"
+  integrity sha512-tDFtglR9YYAkMkpPIyiybSI8F0BXpGIGh1+kMzI2MBjSnsbkWz22PFOTcXpKzIwIZ+neNAQOqn0qM73wEI/7xg==
+
+"@devexpress/dx-react-core@^4.0.9":
+  version "4.0.9"
+  resolved "https://registry.yarnpkg.com/@devexpress/dx-react-core/-/dx-react-core-4.0.9.tgz#14e0f33fde7981eab4b7c40bd044ed0755888d24"
+  integrity sha512-l7w0hgBHEQXrSUXNjWEPnqGo3k+lCfpp86JuU9MVvH+vKc1E3S+TBipsWCHFBw2psoq7UrrBjJ7n6rn0oJqCRg==
+  dependencies:
+    "@devexpress/dx-core" "4.0.9"
+    prop-types "^15.7.2"
+
+"@devexpress/dx-react-grid-material-ui@^4.0.9":
+  version "4.0.9"
+  resolved "https://registry.yarnpkg.com/@devexpress/dx-react-grid-material-ui/-/dx-react-grid-material-ui-4.0.9.tgz#17ad2475c1754a650bb549319c5cd68b7939bae2"
+  integrity sha512-whNrxl1EVFcGMMXMpUzSSIdQ5S7wbdUcJnvzX83EnCBE3EoU7g25TqlWrPfCSFGkSxP3sFVfgjH5d9ENK0JIWQ==
+  dependencies:
+    clsx "^1.0.4"
+    prop-types "^15.7.2"
+
+"@devexpress/dx-react-grid@^4.0.9":
+  version "4.0.9"
+  resolved "https://registry.yarnpkg.com/@devexpress/dx-react-grid/-/dx-react-grid-4.0.9.tgz#c24bb2f6696cbabdedfbb9e01a2f1702f7a2d5f1"
+  integrity sha512-yAQCkUVrQ6T+ITV5j1kIJzwhlh6jfquIRMh/J/PgOwc/STK6TEbXtGckswsU1JmYYlJB3bkM+ifEPIwo3UwUKg==
+  dependencies:
+    "@devexpress/dx-grid-core" "4.0.9"
+
 "@emotion/babel-plugin@^11.12.0":
   version "11.12.0"
   resolved "https://registry.yarnpkg.com/@emotion/babel-plugin/-/babel-plugin-11.12.0.tgz#7b43debb250c313101b3f885eba634f1d723fcc2"
@@ -3366,6 +3399,11 @@ cliui@^7.0.2:
     string-width "^4.2.0"
     strip-ansi "^6.0.0"
     wrap-ansi "^7.0.0"
+
+clsx@^1.0.4:
+  version "1.2.1"
+  resolved "https://registry.yarnpkg.com/clsx/-/clsx-1.2.1.tgz#0ddc4a20a549b59c93a4116bb26f5294ca17dc12"
+  integrity sha512-EcR6r5a8bj6pu3ycsa/E/cKVGuTgZJZdsyUYHOksG/UHIiKfjxzRxYJpyVBwYaQeOvghal9fcc4PidlgzugAQg==
 
 clsx@^2.1.0, clsx@^2.1.1:
   version "2.1.1"
@@ -7992,7 +8030,7 @@ prompts@^2.0.1, prompts@^2.4.2:
     kleur "^3.0.3"
     sisteransi "^1.0.5"
 
-prop-types@^15.6.2, prop-types@^15.8.1:
+prop-types@^15.6.2, prop-types@^15.7.2, prop-types@^15.8.1:
   version "15.8.1"
   resolved "https://registry.yarnpkg.com/prop-types/-/prop-types-15.8.1.tgz#67d87bf1a694f48435cf332c24af10214a3140b5"
   integrity sha512-oj87CgZICdulUohogVAR7AjlC0327U4el4L6eAvOqCeudMDVU0NThNaV+b9Df4dXgSP1gXMTnPdhfe/2qDH5cg==
