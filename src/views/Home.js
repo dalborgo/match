@@ -81,7 +81,7 @@ const Home = () => {
               <Typography
                 color="inherit"
                 component={RouterLink}
-                to={`/team/${teamIdCode[match['teamBName']]}`}
+                to={`/team/${teamIdCode[match['teamAName']]}`}
                 sx={{
                   textDecoration: 'none',
                   '&:hover': {
