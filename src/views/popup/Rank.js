@@ -1,6 +1,7 @@
 import React from 'react'
-import { Box, Modal, Typography } from '@mui/material'
-import { useParams } from 'react-router-dom'
+import { Box, Link, Modal, Typography } from '@mui/material'
+import { useNavigate, useParams } from 'react-router-dom'
+import { useQuery } from '@tanstack/react-query'
 
 const style = {
   position: 'absolute',
@@ -11,25 +12,40 @@ const style = {
   bgcolor: 'background.paper',
   border: '2px solid #000',
   boxShadow: 24,
-  p: 4,
+  p: 2,
   outline: 'none',
 }
 
 const Rank = () => {
   const { matchId } = useParams()
+  const navigate = useNavigate()
+  const { isPending, data: download } = useQuery({
+    queryKey: [`download/${matchId}`],
+    staleTime: 5000,
+  })
+  if (isPending) {return null}
   return (<Modal
       open={Boolean(true)}
-      onClose={() => null}
-      aria-labelledby="modal-title"
-      aria-describedby="modal-description"
+      onClose={() => {
+        navigate('/')
+      }}
     >
       <Box sx={style}>
-        <Typography id="modal-modal-title" variant="h6" component="h2">
+        <Typography variant="h6" sx={{ textAlign: 'center' }}>
           {matchId}
         </Typography>
-        <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-          Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
-        </Typography>
+        <Link
+          href={download.results}
+          sx={{
+            cursor: 'pointer',
+            textDecoration: 'none',
+            '&:hover': {
+              textDecoration: 'underline'
+            }
+          }}
+        >
+          <Typography sx={{ textAlign: 'center' }}>Download</Typography>
+        </Link>
       </Box>
     </Modal>
   )

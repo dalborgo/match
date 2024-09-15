@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { Link as RouterLink, useNavigate, useParams } from 'react-router-dom'
-import { keepPreviousData, useQuery } from '@tanstack/react-query'
+import { keepPreviousData, useQuery, useQueryClient } from '@tanstack/react-query'
 import { Box, Button, Link, Typography } from '@mui/material'
 import moment from 'moment'
 import { getSection } from '../files'
@@ -23,10 +23,9 @@ function getTeamIdCodes (rank) {
 const Home = () => {
   const [page, setPage] = useState('0')
   const [initPage, setInitPage] = useState('')
-  const params = useParams()
-  console.log('params:', params)
   const { matchId } = useParams()
   const navigate = useNavigate()
+  const queryClient = useQueryClient()
   const { isPending, data, isSuccess } = useQuery({
     queryKey: [`calendar/${page}`],
     placeholderData: keepPreviousData,
@@ -98,11 +97,11 @@ const Home = () => {
               <Link
                 onClick={
                   async () => {
-                    /*  const queryKey = ['reports/closing_day', { id: docId }]
-                      if (!queryClient.getQueryData(queryKey)) {
-                        await queryClient.prefetchQuery(queryKey, { throwOnError: true })
-                      }*/
-                    navigate(`/rank/${match['objId']}`, { state: {} })
+                    const queryKey = [`download/${match['objId']}`]
+                    if (!queryClient.getQueryData(queryKey)) {
+                      await queryClient.prefetchQuery(queryKey, { throwOnError: true })
+                    }
+                    navigate(`/${match['objId']}`, { state: {} })
                   }
                 }
                 sx={{
@@ -140,7 +139,7 @@ const Home = () => {
           ))}
         </Box>
       </Box>
-      {matchId && <Rank matchId={matchId}/>}
+      {matchId && <Rank/>}
     </>
   
   )

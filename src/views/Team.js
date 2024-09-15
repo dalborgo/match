@@ -4,10 +4,18 @@ import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { IntegratedSorting, SortingState, } from '@devexpress/dx-react-grid'
 import { Grid, TableHeaderRow, VirtualTable, } from '@devexpress/dx-react-grid-material-ui'
 import { Avatar, Box, Tooltip } from '@mui/material'
+import { CopyToClipboard } from 'react-copy-to-clipboard'
 import { withStyles } from '@mui/styles'
 
 const shouldDisplayAvatar = photoUrl => {
   return photoUrl && !photoUrl.includes('ndplayer')
+}
+
+const ROLES = {
+  'GKP': 'Portiere',
+  'DEF': 'Difensore',
+  'MID': 'Centrocampista',
+  'FWD': 'Attaccante'
 }
 
 const priority = {
@@ -29,11 +37,11 @@ const compareByRole = (a = {}, b = {}) => {
   const priorityB = priority[roleB] || 5
   return priorityA - priorityB
 }
+const getLastName = (fullName) => {
+  const parts = fullName.split(' ')
+  return parts[parts.length - 1]
+}
 const compareByName = (a, b) => {
-  const getLastName = (fullName) => {
-    const parts = fullName.split(' ')
-    return parts[parts.length - 1]
-  }
   const lastNameA = getLastName(a)
   const lastNameB = getLastName(b)
   return lastNameA.localeCompare(lastNameB)
@@ -43,17 +51,24 @@ const tableColumnExtensions = [
   { columnName: 'roleAShort', width: 80 },
   { columnName: 'shirtNumber', width: 60 },
   { columnName: 'photoUrl', width: 60 },
-  { columnName: 'title', width: 120 },
-  { columnName: 'minutes_on_field', },
+  { columnName: 'title', width: 150 },
+  { columnName: 'minutes_on_field', width: 60 },
 ]
 
 const CellBase = props => {
-  const { column, value } = props
+  const { column, value, row } = props
   const { theme } = props
   const cellStyle = {
     padding: theme.spacing(1),
     whiteSpace: 'normal',
     borderColor: '#2f2f2f',
+  }
+  if (column.name === 'title') {
+    return (
+      <VirtualTable.Cell {...props} value={null} style={cellStyle}>
+        {value} <span style={{ color: '#b3b3b3' }}>{row.subtitle}</span>
+      </VirtualTable.Cell>
+    )
   }
   if (column.name === 'photoUrl') {
     if (!shouldDisplayAvatar(value)) {
@@ -84,18 +99,16 @@ const CellBase = props => {
   }
   return <VirtualTable.Cell {...props} style={cellStyle}/>
 }
-const HeadBase = props => {
-  const { theme } = props
-  const cellStyle = {
-    padding: theme.spacing(1),
-    borderBottom: 0,
-    backgroundColor: '#191919'
-  }
-  return <VirtualTable.Cell {...props} style={cellStyle}/>
-}
 const Cell = withStyles(null, { withTheme: true })(CellBase)
 
-const Head = withStyles(null, { withTheme: true })(HeadBase)
+const copyTeam = rows => {
+  let toCopy = ''
+  for (let row of rows) {
+    if (!row.roleAShort && row.shirtNumber) {continue}
+    toCopy += `${row.shirtNumber ? row.shirtNumber + '\n' : ''}${getLastName(row.title)}\n${ROLES[row.roleAShort] || 'Allenatore'}\n\n`
+  }
+  return toCopy
+}
 
 const Root = props => <Grid.Root {...props} style={{ height: '100%' }}/>
 const Team = () => {
@@ -104,7 +117,6 @@ const Team = () => {
   const { isPending, data } = useQuery({
     queryKey: [`grid/${id}`],
   })
-  console.log('data:', data)
   const [columns] = useState([
     {
       name: 'roleAShort',
@@ -114,12 +126,14 @@ const Team = () => {
     { name: 'shirtNumber', title: 'N.' },
     { name: 'photoUrl', title: ' ' },
     { name: 'title', title: 'Nome' },
-    { name: 'minutes_on_field', title: 'Min.', getCellValue: row => row.stats.minutes_on_field },
+    { name: 'minutes_on_field', title: 'M.', getCellValue: row => row.stats.minutes_on_field },
+    { name: 'goal', title: 'G.', getCellValue: row => row.stats.goal },
   ])
   const [integratedSortingColumnExtensions] = useState([
     { columnName: 'roleAShort', compare: compareByRole },
     { columnName: 'title', compare: compareByName },
     { columnName: 'minutes_on_field', compare: compareWithNull },
+    { columnName: 'goal', compare: compareWithNull },
   ])
   const [sortingStateColumnExtensions] = useState([
     { columnName: 'photoUrl', sortingEnabled: false },
@@ -130,6 +144,26 @@ const Team = () => {
     }
   }, [id, queryClient])
   const rows = data?.results?.players || []
+  const toCopy = copyTeam(rows)
+  const Head = React.memo(withStyles(null, { withTheme: true })(props => {
+    const { column, theme } = props
+    const cellStyle = {
+      padding: theme.spacing(1),
+      borderBottom: 0,
+      backgroundColor: '#191919'
+    }
+    if (column.name === 'photoUrl') {
+      return (
+        <VirtualTable.Cell {...props} style={cellStyle}>
+          <CopyToClipboard text={toCopy}>
+            <span style={{ fontSize: 'small', cursor: 'pointer', marginTop: -6, marginLeft: 4 }}>📋</span>
+          </CopyToClipboard>
+        </VirtualTable.Cell>
+      )
+    }
+    
+    return <VirtualTable.Cell {...props} style={cellStyle}/>
+  }))
   if (isPending) { return null}
   console.log('rows:', rows)
   return (
