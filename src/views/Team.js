@@ -53,10 +53,11 @@ const CellBase = props => {
   const cellStyle = {
     padding: theme.spacing(1),
     whiteSpace: 'normal',
+    borderColor: '#2f2f2f',
   }
   if (column.name === 'photoUrl') {
     if (!shouldDisplayAvatar(value)) {
-      return <VirtualTable.Cell {...props} value={null}/>
+      return <VirtualTable.Cell {...props} value={null} style={cellStyle}/>
     }
     return (
       <VirtualTable.Cell  {...props} style={cellStyle}>
@@ -87,6 +88,8 @@ const HeadBase = props => {
   const { theme } = props
   const cellStyle = {
     padding: theme.spacing(1),
+    borderBottom: 0,
+    backgroundColor: '#191919'
   }
   return <VirtualTable.Cell {...props} style={cellStyle}/>
 }
@@ -132,7 +135,7 @@ const Team = () => {
   return (
     <Box
       sx={{
-        height: 'calc(100vh - 65px)',
+        height: 'calc(100vh - 48px)',
         marginTop: '48px',
       }}
     >

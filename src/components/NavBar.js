@@ -28,7 +28,7 @@ const NavBar = () => {
             <Button
               color={location.pathname.includes('/team') ? 'secondary' : 'inherit'}
               component={Link}
-              to={`/team/${id || '-5251'}`}
+              to={`/team/${id}`}
             >
               Team
             </Button>

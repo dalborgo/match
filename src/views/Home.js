@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Link as RouterLink } from 'react-router-dom'
+import { Link as RouterLink, useNavigate, useParams } from 'react-router-dom'
 import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import { Box, Button, Link, Typography } from '@mui/material'
 import moment from 'moment'
@@ -22,8 +22,11 @@ function getTeamIdCodes (rank) {
 
 const Home = () => {
   const [page, setPage] = useState('0')
-  const [rankOpen, setRankOpen] = useState(false)
   const [initPage, setInitPage] = useState('')
+  const params = useParams()
+  console.log('params:', params)
+  const { matchId } = useParams()
+  const navigate = useNavigate()
   const { isPending, data, isSuccess } = useQuery({
     queryKey: [`calendar/${page}`],
     placeholderData: keepPreviousData,
@@ -61,7 +64,7 @@ const Home = () => {
       <Box
         sx={{
           height: 'calc(100vh - 65px)',
-          marginTop: '58px',
+          marginTop: '48px',
           overflowY: 'auto',
         }}
       >
@@ -75,7 +78,7 @@ const Home = () => {
                   disabled={!next}>Successivo</Button>
         </Box>
         <Box>
-          {list.map((match, index) => (
+          {list.map((match, index) => console.log(match) || (
             <Box key={index} display="flex" justifyContent="space-between" alignItems="center"
                  sx={{ padding: 1, borderBottom: '1px solid #888888' }}>
               <Typography
@@ -93,7 +96,15 @@ const Home = () => {
                 {match['teamAName']}
               </Typography>
               <Link
-                onClick={() => setRankOpen(true)}
+                onClick={
+                  async () => {
+                    /*  const queryKey = ['reports/closing_day', { id: docId }]
+                      if (!queryClient.getQueryData(queryKey)) {
+                        await queryClient.prefetchQuery(queryKey, { throwOnError: true })
+                      }*/
+                    navigate(`/rank/${match['objId']}`, { state: {} })
+                  }
+                }
                 sx={{
                   cursor: 'pointer',
                   textDecoration: 'none',
@@ -129,7 +140,7 @@ const Home = () => {
           ))}
         </Box>
       </Box>
-      <Rank open={rankOpen} setRankOpen={setRankOpen}/>
+      {matchId && <Rank matchId={matchId}/>}
     </>
   
   )

@@ -1,5 +1,6 @@
 import React from 'react'
 import { Box, Modal, Typography } from '@mui/material'
+import { useParams } from 'react-router-dom'
 
 const style = {
   position: 'absolute',
@@ -14,16 +15,17 @@ const style = {
   outline: 'none',
 }
 
-const Rank = ({ open, setRankOpen }) => {
+const Rank = () => {
+  const { matchId } = useParams()
   return (<Modal
-      open={open}
-      onClose={() => setRankOpen(false)}
+      open={Boolean(true)}
+      onClose={() => null}
       aria-labelledby="modal-title"
       aria-describedby="modal-description"
     >
       <Box sx={style}>
         <Typography id="modal-modal-title" variant="h6" component="h2">
-          Text in a modal
+          {matchId}
         </Typography>
         <Typography id="modal-modal-description" sx={{ mt: 2 }}>
           Duis mollis, est non commodo luctus, nisi erat porttitor ligula.

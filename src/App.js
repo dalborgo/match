@@ -7,6 +7,7 @@ import { envConfig } from './init'
 import axios from 'axios'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import Team from './views/Team'
+import Rank from './views/popup/Rank'
 
 const PORT = envConfig['BACKEND_PORT']
 const darkTheme = createTheme({
@@ -40,6 +41,7 @@ function App () {
         <Box sx={{ padding: 0, paddingTop: 0 }}>
           <Routes>
             <Route path="/" element={<Home/>}/>
+            <Route path="/rank/:matchId" element={<Rank/>}/>
             <Route path="/team/:id" element={<Team/>}/>
             <Route path="/prova" element={<Prova/>}/>
           </Routes>
