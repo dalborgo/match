@@ -2,11 +2,11 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'
 import { Box, createTheme, CssBaseline, ThemeProvider, } from '@mui/material'
 import NavBar from './components/NavBar'
 import Home from './views/Home'
-import Prova from './views/Prova'
+import Game from './views/Game'
+import Team from './views/Team'
 import { envConfig } from './init'
 import axios from 'axios'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import Team from './views/Team'
 
 const PORT = envConfig['BACKEND_PORT']
 const darkTheme = createTheme({
@@ -42,7 +42,7 @@ function App () {
             <Route path="/" element={<Home/>}/>
             <Route path="/:matchId" element={<Home/>}/>
             <Route path="/team/:id" element={<Team/>}/>
-            <Route path="/prova" element={<Prova/>}/>
+            <Route path="/game/:id" element={<Game/>}/>
           </Routes>
         </Box>
       </Router>

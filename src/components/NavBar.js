@@ -1,14 +1,15 @@
-import { Link, useLocation, useParams } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import { AppBar, Box, Button, LinearProgress, Toolbar } from '@mui/material'
 import { useIsFetching } from '@tanstack/react-query'
 
 const NavBar = () => {
   const location = useLocation()
   const isFetching = useIsFetching()
-  const { id } = useParams()
+  const { pathname } = location
+  const id = pathname.split('/')[2]
   return (
     <AppBar position="fixed">
-      <Toolbar variant="dense">
+      <Toolbar variant="dense" disableGutters style={{ paddingLeft: 8, paddingRight: 8 }}>
         <Box sx={{ flexGrow: 1 }}>
           <Button
             color={location.pathname === '/' ? 'secondary' : 'inherit'}
@@ -17,22 +18,30 @@ const NavBar = () => {
           >
             Home
           </Button>
-          <Button
-            color={location.pathname === '/prova' ? 'secondary' : 'inherit'}
-            component={Link}
-            to="/prova"
-          >
-            Prova
-          </Button>
-          {location.pathname.includes('/team') && (
-            <Button
-              color={location.pathname.includes('/team') ? 'secondary' : 'inherit'}
-              component={Link}
-              to={`/team/${id}`}
-            >
-              Team
-            </Button>
-          )}
+          {
+            (location.pathname.includes('/team') || location.pathname.includes('/game')) &&
+            (
+              <Button
+                color={location.pathname.includes('/team') ? 'secondary' : 'inherit'}
+                component={Link}
+                to={`/team/${id}`}
+              >
+                Team
+              </Button>
+            )
+          }
+          {
+            (location.pathname.includes('/team') || location.pathname.includes('/game')) &&
+            (
+              <Button
+                color={location.pathname.includes('/game') ? 'secondary' : 'inherit'}
+                component={Link}
+                to={`/game/${id}`}
+              >
+                Game
+              </Button>
+            )
+          }
         </Box>
       </Toolbar>
       {isFetching > 0 && (

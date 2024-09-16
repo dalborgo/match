@@ -127,7 +127,7 @@ const Team = () => {
     { name: 'photoUrl', title: ' ' },
     { name: 'title', title: 'Nome' },
     { name: 'minutes_on_field', title: 'M.', getCellValue: row => row.stats.minutes_on_field },
-    { name: 'goal', title: 'G.', getCellValue: row => row.stats.goal },
+    { name: 'goal', title: '⚽', getCellValue: row => row.stats.goal },
   ])
   const [integratedSortingColumnExtensions] = useState([
     { columnName: 'roleAShort', compare: compareByRole },
