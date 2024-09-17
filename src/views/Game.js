@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { useParams } from 'react-router-dom'
 import { Box, FormControlLabel, Radio, RadioGroup, Tab, Tabs, TextField, Typography } from '@mui/material'
@@ -15,8 +15,7 @@ function Game () {
     queryKey: [`grid/${id}`],
   })
   
-  const players = data?.results?.players || []
-  
+  const players = useMemo(() => (data?.results?.players || []).filter(player => player.shirtNumber), [data?.results?.players])
   const [currentPlayer, setCurrentPlayer] = useState(null)
   const [userInput, setUserInput] = useState('')
   const [feedback, setFeedback] = useState('')
@@ -77,8 +76,7 @@ function Game () {
     resetGame()
   }
   
-  const handleRadioChange = (event) => {
-    const selectedName = event.target.value
+  const handleRadioChange = selectedName => {
     setSelectedName(selectedName)
     if (currentPlayer && selectedName === formatPlayerName(currentPlayer)) {
       setNameFeedback(`OK ${formatPlayerName(currentPlayer)} ${currentPlayer.shirtNumber || ''}`)
@@ -183,7 +181,7 @@ function Game () {
         <Box>
           {/* Gioco per Numero */}
           <Typography variant="h4">{currentPlayer.shirtNumber}</Typography><br/>
-          <RadioGroup value={selectedName} onChange={handleRadioChange}>
+          <RadioGroup value={selectedName}>
             <Box display="flex" gap={3} justifyContent={'center'}>
               {columns.map((column, columnIndex) => (
                 <Box key={columnIndex}> {/* Ogni colonna */}
@@ -192,11 +190,11 @@ function Game () {
                       <FormControlLabel
                         key={player.title}
                         value={formatPlayerName(player)} // Usa il nome formattato "Cognome N."
-                        control={<Radio/>}
+                        control={<Radio
+                          onClick={() => handleRadioChange(formatPlayerName(player))}/>}
                         label={formatPlayerName(player)}
                       /><br/>
                     </Box>
-                  
                   ))}
                 </Box>
               ))}

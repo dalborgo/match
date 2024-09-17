@@ -1,0 +1,97 @@
+.pitch-position .position-marker {
+    box-shadow: 1px 1px 2px 1px rgba(0, 0, 0, .2)
+}
+
+.pitch-position .position-marker:hover:before {
+    content: attr(data-tooltip);
+    display: block;
+    position: absolute;
+    background: #0af;
+    color: #fff;
+    font-weight: 700;
+    font-size: 13px;
+    padding: 4px;
+    border-radius: 3px;
+    background-clip: padding-box;
+    box-shadow: 1px 1px 2px 1px rgba(0, 0, 0, .2);
+    z-index: 2
+}
+
+.pitch-position .position-marker.inLeft:before {
+    left: 100%
+}
+
+.pitch-position .position-marker.inRight:before {
+    right: 100%
+}
+
+.pitch-position .position-marker.inTop:before {
+    top: 100%
+}
+
+.pitch-position .position-marker.inBottom:before {
+    bottom: 100%
+}
+
+.pitch-position .position-marker.primary:before {
+    color: #000;
+    background: #fff
+}
+
+.pitch-position .position-marker.low {
+    margin-left: -4px;
+    margin-bottom: -4px;
+    background: #6cf;
+    border-radius: 100%;
+    background-clip: padding-box
+}
+
+.pitch-position .position-marker.medium {
+    margin-left: -6px;
+    margin-bottom: -6px;
+    background: #6cf;
+    border-radius: 100%;
+    background-clip: padding-box
+}
+
+.pitch-position .position-marker.high {
+    margin-left: -8px;
+    margin-bottom: -8px;
+    background: #6cf;
+    border-radius: 100%;
+    background-clip: padding-box
+}
+
+.pitch-position .position-marker.primary {
+    margin-left: -11.5px;
+    margin-bottom: -10px;
+    background: #fff;
+    border-radius: 100%;
+    background-clip: padding-box
+}
+
+.gears-rel.pitch-position {
+    width: 156px !important;
+    height: 234px !important;
+    background-size: 100% 100% !important;
+    background-image: url(images/pitch_vlad.png) !important;
+    position: absolute;
+}
+
+.gears-rel.pitch-position > .gears-abs {
+    width: 156px !important;
+    height: 116px !important
+}
+
+.gears-abs {
+    position: absolute;
+}
+
+.gears-fit {
+    top: 0;
+    bottom: 0;
+    right: 0;
+    left: 0;
+}
+
+

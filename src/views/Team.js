@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { IntegratedSorting, SortingState, } from '@devexpress/dx-react-grid'
 import { Grid, TableHeaderRow, VirtualTable, } from '@devexpress/dx-react-grid-material-ui'
-import { Avatar, Box, Tooltip } from '@mui/material'
+import { Avatar, Box, Link, Tooltip } from '@mui/material'
 import { CopyToClipboard } from 'react-copy-to-clipboard'
 import { withStyles } from '@mui/styles'
+import PlayerStats from './popup/PlayerStats'
 
 const shouldDisplayAvatar = photoUrl => {
   return photoUrl && !photoUrl.includes('ndplayer')
@@ -53,11 +54,26 @@ const tableColumnExtensions = [
   { columnName: 'photoUrl', width: 60 },
   { columnName: 'title', width: 150 },
   { columnName: 'minutes_on_field', width: 60 },
+  { columnName: 'presences', width: 60 },
+  { columnName: 'goal', width: 60 },
+  { columnName: 'assist', width: 60 },
+  { columnName: 'yellow_cards', width: 60 },
+  { columnName: 'red_cards', width: 60 },
+  { columnName: 'foul', width: 60 },
+  { columnName: 'dangerous_foul', width: 60 },
+  { columnName: 'tackle', width: 60 },
+  { columnName: 'pressing_duel', width: 60 },
+  { columnName: 'progressive_run', width: 60 },
+  { columnName: 'shot_from_outside_area', width: 60 },
+  { columnName: 'dribble', width: 60 },
+  { columnName: 'shot_from_outside_area', width: 60 },
 ]
 
 const CellBase = props => {
   const { column, value, row } = props
   const { theme } = props
+  const { pathname } = useLocation()
+  const navigate = useNavigate()
   const cellStyle = {
     padding: theme.spacing(1),
     whiteSpace: 'normal',
@@ -67,6 +83,28 @@ const CellBase = props => {
     return (
       <VirtualTable.Cell {...props} value={null} style={cellStyle}>
         {value} <span style={{ color: '#b3b3b3' }}>{row.subtitle}</span>
+      </VirtualTable.Cell>
+    )
+  }
+  if (column.name === 'roleAShort') {
+    return (
+      <VirtualTable.Cell {...props} style={cellStyle}>
+        <Link
+          onClick={
+            () => {
+              navigate(`${pathname}/player/${row.id}`)
+            }
+          }
+          sx={{
+            cursor: 'pointer',
+            textDecoration: 'none',
+            '&:hover': {
+              textDecoration: 'underline'
+            }
+          }}
+        >
+          {value}
+        </Link>
       </VirtualTable.Cell>
     )
   }
@@ -112,7 +150,9 @@ const copyTeam = rows => {
 
 const Root = props => <Grid.Root {...props} style={{ height: '100%' }}/>
 const Team = () => {
-  const { id } = useParams()
+  const { id, playerId } = useParams()
+  console.log('playerId:', playerId)
+  console.log('id:', id)
   const queryClient = useQueryClient()
   const { isPending, data } = useQuery({
     queryKey: [`grid/${id}`],
@@ -127,13 +167,37 @@ const Team = () => {
     { name: 'photoUrl', title: ' ' },
     { name: 'title', title: 'Nome' },
     { name: 'minutes_on_field', title: 'M.', getCellValue: row => row.stats.minutes_on_field },
+    { name: 'presences', title: 'P.', getCellValue: row => row.stats.presences },
     { name: 'goal', title: '⚽', getCellValue: row => row.stats.goal },
+    { name: 'assist', title: 'A.', getCellValue: row => row.stats.assist },
+    { name: 'yellow_cards', title: '🟨', getCellValue: row => row.stats.yellow_cards },
+    { name: 'red_cards', title: '🟥', getCellValue: row => row.stats.red_cards },
+    { name: 'foul', title: 'F.', getCellValue: row => row.stats.foul },
+    { name: 'dangerous_foul', title: 'DF', getCellValue: row => row.stats.dangerous_foul },
+    { name: 'tackle', title: 'T.', getCellValue: row => row.stats.tackle },
+    { name: 'pressing_duel', title: 'PR', getCellValue: row => row.stats.pressing_duel },
+    { name: 'progressive_run', title: 'R.', getCellValue: row => row.stats.progressive_run },
+    { name: 'dribble', title: 'D.', getCellValue: row => row.stats.dribble },
+    { name: 'shot_from_outside_area', title: 'SO', getCellValue: row => row.stats.shot_from_outside_area },
+    { name: 'foul_suffered', title: 'FS', getCellValue: row => row.stats.foul_suffered },
   ])
   const [integratedSortingColumnExtensions] = useState([
     { columnName: 'roleAShort', compare: compareByRole },
     { columnName: 'title', compare: compareByName },
     { columnName: 'minutes_on_field', compare: compareWithNull },
+    { columnName: 'presences', compare: compareWithNull },
     { columnName: 'goal', compare: compareWithNull },
+    { columnName: 'assist', compare: compareWithNull },
+    { columnName: 'yellow_cards', compare: compareWithNull },
+    { columnName: 'red_cards', compare: compareWithNull },
+    { columnName: 'foul', compare: compareWithNull },
+    { columnName: 'dangerous_foul', compare: compareWithNull },
+    { columnName: 'tackle', compare: compareWithNull },
+    { columnName: 'pressing_duel', compare: compareWithNull },
+    { columnName: 'progressive_run', compare: compareWithNull },
+    { columnName: 'dribble', compare: compareWithNull },
+    { columnName: 'shot_from_outside_area', compare: compareWithNull },
+    { columnName: 'foul_suffered', compare: compareWithNull },
   ])
   const [sortingStateColumnExtensions] = useState([
     { columnName: 'photoUrl', sortingEnabled: false },
@@ -198,8 +262,8 @@ const Team = () => {
           }}
         />
       </Grid>
+      {playerId && <PlayerStats teamId={id}/>}
     </Box>
-  
   )
 }
 

@@ -35,17 +35,18 @@ function App () {
     <ThemeProvider theme={darkTheme}>
       <CssBaseline/>
       <QueryClientProvider client={queryClient}>
-      <Router>
-        <NavBar/>
-        <Box sx={{ padding: 0, paddingTop: 0 }}>
-          <Routes>
-            <Route path="/" element={<Home/>}/>
-            <Route path="/:matchId" element={<Home/>}/>
-            <Route path="/team/:id" element={<Team/>}/>
-            <Route path="/game/:id" element={<Game/>}/>
-          </Routes>
-        </Box>
-      </Router>
+        <Router>
+          <NavBar/>
+          <Box sx={{ padding: 0, paddingTop: 0 }}>
+            <Routes>
+              <Route path="/" element={<Home/>}/>
+              <Route path="/:matchId" element={<Home/>}/>
+              <Route path="/team/:id" element={<Team/>}/>
+              <Route path="/team/:id/player/:playerId" element={<Team/>}/>
+              <Route path="/game/:id" element={<Game/>}/>
+            </Routes>
+          </Box>
+        </Router>
       </QueryClientProvider>
     </ThemeProvider>
   )

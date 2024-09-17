@@ -79,7 +79,7 @@ const Home = () => {
         <Box>
           {list.map((match, index) => console.log(match) || (
             <Box key={index} display="flex" justifyContent="space-between" alignItems="center"
-                 sx={{ padding: 1, borderBottom: '1px solid #888888' }}>
+                 sx={{ padding: 0, borderBottom: '1px solid #313131', paddingLeft: 1, paddingRight: 2 }}>
               <Typography
                 color="inherit"
                 component={RouterLink}
@@ -101,7 +101,7 @@ const Home = () => {
                     if (!queryClient.getQueryData(queryKey)) {
                       await queryClient.prefetchQuery(queryKey, { throwOnError: true })
                     }
-                    navigate(`/${match['objId']}`, { state: {} })
+                    navigate(`/${match['objId']}`)
                   }
                 }
                 sx={{
@@ -141,7 +141,6 @@ const Home = () => {
       </Box>
       {matchId && <Rank/>}
     </>
-  
   )
 }
 
