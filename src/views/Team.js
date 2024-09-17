@@ -31,16 +31,14 @@ const compareWithNull = (a, b) => {
   const valB = !b ? 0 : b
   return valA - valB
 }
-const compareByRole = (a = {}, b = {}) => {
-  const roleA = a.roleAShort || ''
-  const roleB = b.roleAShort || ''
+const compareByRole = (roleA, roleB) => {
   const priorityA = priority[roleA] || 5
   const priorityB = priority[roleB] || 5
   return priorityA - priorityB
 }
 const getLastName = (fullName) => {
   const parts = fullName.split(' ')
-  return parts[parts.length - 1]
+  return parts.slice(1).join(' ')
 }
 const compareByName = (a, b) => {
   const lastNameA = getLastName(a)
@@ -92,7 +90,7 @@ const CellBase = props => {
         <Link
           onClick={
             () => {
-              navigate(`${pathname}/player/${row.id}`)
+              navigate(`${pathname}/player/${row.id}`, { state: { ...row } })
             }
           }
           sx={{
@@ -103,7 +101,7 @@ const CellBase = props => {
             }
           }}
         >
-          {value}
+          {value || '--'}
         </Link>
       </VirtualTable.Cell>
     )
@@ -141,7 +139,7 @@ const Cell = withStyles(null, { withTheme: true })(CellBase)
 
 const copyTeam = rows => {
   let toCopy = ''
-  for (let row of rows) {
+  for (let row of rows.sort((a, b) => compareByRole(a.roleAShort, b.roleAShort))) {
     if (!row.roleAShort && row.shirtNumber) {continue}
     toCopy += `${row.shirtNumber ? row.shirtNumber + '\n' : ''}${getLastName(row.title)}\n${ROLES[row.roleAShort] || 'Allenatore'}\n\n`
   }
@@ -151,8 +149,6 @@ const copyTeam = rows => {
 const Root = props => <Grid.Root {...props} style={{ height: '100%' }}/>
 const Team = () => {
   const { id, playerId } = useParams()
-  console.log('playerId:', playerId)
-  console.log('id:', id)
   const queryClient = useQueryClient()
   const { isPending, data } = useQuery({
     queryKey: [`grid/${id}`],
@@ -175,7 +171,7 @@ const Team = () => {
     { name: 'foul', title: 'F.', getCellValue: row => row.stats.foul },
     { name: 'dangerous_foul', title: 'DF', getCellValue: row => row.stats.dangerous_foul },
     { name: 'tackle', title: 'T.', getCellValue: row => row.stats.tackle },
-    { name: 'pressing_duel', title: 'PR', getCellValue: row => row.stats.pressing_duel },
+    { name: 'pressing_duel', title: 'PD', getCellValue: row => row.stats.pressing_duel },
     { name: 'progressive_run', title: 'R.', getCellValue: row => row.stats.progressive_run },
     { name: 'dribble', title: 'D.', getCellValue: row => row.stats.dribble },
     { name: 'shot_from_outside_area', title: 'SO', getCellValue: row => row.stats.shot_from_outside_area },
