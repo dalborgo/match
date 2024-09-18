@@ -71,7 +71,7 @@ const PlayerStats = ({ teamId }) => {
         <Box position="relative" sx={{ left: 170 }}>
           <Box mb={1}>
             <Typography color={'secondary'} variant="h6" display={'inline'}>
-              {player.shirtNumber ? '#' + player.shirtNumber + ' ' : ''}
+              {player.shirtNumber ? `#${player.shirtNumber} ` : ''}
             </Typography>
             <Typography color={'primary'} variant="h6" display={'inline'}>
               {player.title}
