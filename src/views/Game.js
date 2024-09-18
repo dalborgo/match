@@ -13,6 +13,7 @@ function Game () {
   const { id } = useParams()
   const { isPending, data } = useQuery({
     queryKey: [`grid/${id}`],
+    staleTime: 300000,
   })
   
   const players = useMemo(() => (data?.results?.players || []).filter(player => player.shirtNumber), [data?.results?.players])

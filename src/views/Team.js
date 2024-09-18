@@ -155,6 +155,7 @@ const Team = () => {
   const queryClient = useQueryClient()
   const { isPending, data } = useQuery({
     queryKey: [`grid/${id}`],
+    staleTime: 300000,
   })
   const [columns] = useState([
     {
