@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { Link as RouterLink, useNavigate, useParams } from 'react-router-dom'
-import { keepPreviousData, useQuery, useQueryClient } from '@tanstack/react-query'
+import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import { Box, Button, Link, Typography } from '@mui/material'
 import moment from 'moment'
 import { getSection } from '../files'
@@ -25,7 +25,6 @@ const Home = () => {
   const [initPage, setInitPage] = useState('')
   const { matchId } = useParams()
   const navigate = useNavigate()
-  const queryClient = useQueryClient()
   const { isPending, data, isSuccess } = useQuery({
     queryKey: [`calendar/${page}`],
     placeholderData: keepPreviousData,
@@ -97,11 +96,17 @@ const Home = () => {
               <Link
                 onClick={
                   async () => {
-                    const queryKey = [`download/${match['objId']}`]
-                    if (!queryClient.getQueryData(queryKey)) {
-                      await queryClient.prefetchQuery(queryKey, { throwOnError: true })
-                    }
-                    navigate(`/${match['objId']}`)
+                    /*const queryKey = [`download/${match['objId']}`]
+                      if (!queryClient.getQueryData(queryKey)) {
+                        await queryClient.prefetchQuery(queryKey, { throwOnError: true })
+                      }*/
+                    navigate(`/${match['objId']}`, {
+                      state: {
+                        ...match,
+                        teamAId: teamIdCode[match['teamAName']],
+                        teamBId: teamIdCode[match['teamBName']],
+                      }
+                    })
                   }
                 }
                 sx={{

@@ -5,7 +5,7 @@ import { IntegratedSorting, SortingState, } from '@devexpress/dx-react-grid'
 import { Grid, TableHeaderRow, VirtualTable, } from '@devexpress/dx-react-grid-material-ui'
 import { Avatar, Box, Link, Tooltip } from '@mui/material'
 import { CopyToClipboard } from 'react-copy-to-clipboard'
-import { withStyles } from '@mui/styles'
+import { useTheme, withStyles } from '@mui/styles'
 import PlayerStats from './popup/PlayerStats'
 
 const shouldDisplayAvatar = photoUrl => {
@@ -69,76 +69,6 @@ const tableColumnExtensions = [
   { columnName: 'shot_from_outside_area', width: 60 },
   { columnName: 'foul_suffered', width: 60 },
 ]
-
-const CellBase = props => {
-  const { column, value, row } = props
-  const { theme } = props
-  const { pathname } = useLocation()
-  const navigate = useNavigate()
-  const cellStyle = {
-    padding: theme.spacing(1),
-    whiteSpace: 'normal',
-    borderColor: '#2f2f2f',
-  }
-  if (column.name === 'title') {
-    return (
-      <VirtualTable.Cell {...props} value={null} style={cellStyle}>
-        {value} <span style={{ color: '#b3b3b3' }}>{row.subtitle}</span>
-      </VirtualTable.Cell>
-    )
-  }
-  if (column.name === 'roleAShort') {
-    return (
-      <VirtualTable.Cell {...props} style={cellStyle}>
-        <Link
-          onClick={
-            () => {
-              navigate(`${pathname}/player/${row.id}`, { state: { ...row } })
-            }
-          }
-          sx={{
-            cursor: 'pointer',
-            textDecoration: 'none',
-            '&:hover': {
-              textDecoration: 'underline'
-            }
-          }}
-        >
-          {value || '--'}
-        </Link>
-      </VirtualTable.Cell>
-    )
-  }
-  if (column.name === 'photoUrl') {
-    if (!shouldDisplayAvatar(value)) {
-      return <VirtualTable.Cell {...props} value={null} style={cellStyle}/>
-    }
-    return (
-      <VirtualTable.Cell  {...props} style={cellStyle}>
-        <Tooltip
-          title={<img src={value} alt="img" style={{
-            width: 'auto',
-            height: 'auto',
-            maxWidth: '200px',
-            maxHeight: '200px'
-          }}/>}
-          placement="top"
-        >
-          <Avatar
-            src={value}
-            style={{
-              width: 24,
-              height: 24,
-              cursor: 'help',
-              padding: 0,
-            }}/>
-        </Tooltip>
-      </VirtualTable.Cell>
-    )
-  }
-  return <VirtualTable.Cell {...props} style={cellStyle}/>
-}
-const Cell = withStyles(null, { withTheme: true })(CellBase)
 
 const copyTeam = rows => {
   let toCopy = ''
@@ -214,7 +144,86 @@ const Team = () => {
     }
   }, [id, queryClient])
   const rows = data?.results?.players || []
+  const highestStats = data?.results?.highestStats || {}
   const toCopy = copyTeam(rows)
+  const Cell = React.memo(props => {
+    const { column, value, row } = props
+    const theme = useTheme()
+    const { pathname } = useLocation()
+    const navigate = useNavigate()
+    const cellStyle = {
+      padding: theme.spacing(1),
+      whiteSpace: 'normal',
+      borderColor: '#2f2f2f',
+    }
+    if (column.name === 'title') {
+      return (
+        <VirtualTable.Cell {...props} value={null} style={cellStyle}>
+          {value} <span style={{ color: '#b3b3b3' }}>{row.subtitle}</span>
+        </VirtualTable.Cell>
+      )
+    }
+    if (column.name === 'roleAShort') {
+      return (
+        <VirtualTable.Cell {...props} style={cellStyle}>
+          <Link
+            onClick={
+              () => {
+                navigate(`${pathname}/player/${row.id}`, { state: { ...row } })
+              }
+            }
+            sx={{
+              cursor: 'pointer',
+              textDecoration: 'none',
+              '&:hover': {
+                textDecoration: 'underline'
+              }
+            }}
+          >
+            {value || '--'}
+          </Link>
+        </VirtualTable.Cell>
+      )
+    }
+    if (column.name === 'photoUrl') {
+      if (!shouldDisplayAvatar(value)) {
+        return <VirtualTable.Cell {...props} value={null} style={cellStyle}/>
+      }
+      return (
+        <VirtualTable.Cell  {...props} style={cellStyle}>
+          <Tooltip
+            title={<img src={value} alt="img" style={{
+              width: 'auto',
+              height: 'auto',
+              maxWidth: '200px',
+              maxHeight: '200px'
+            }}/>}
+            placement="top"
+          >
+            <Avatar
+              src={value}
+              style={{
+                width: 24,
+                height: 24,
+                cursor: 'help',
+                padding: 0,
+              }}/>
+          </Tooltip>
+        </VirtualTable.Cell>
+      )
+    }
+    const isBest = highestStats?.[column.name]?.['idPlayer'] === row.id
+    return (
+      <VirtualTable.Cell {...props} style={{
+        ...cellStyle,
+        color: isBest ? 'gold' : undefined,
+        fontWeight: isBest ? 'bold' : undefined,
+      }}>
+        {value}
+      </VirtualTable.Cell>
+    )
+  })
+  
   const Head = React.memo(withStyles(null, { withTheme: true })(props => {
     const { column, theme } = props
     const cellStyle = {
@@ -232,10 +241,17 @@ const Team = () => {
       )
     }
     
-    return <VirtualTable.Cell {...props} style={cellStyle}/>
+    return (
+      <VirtualTable.Cell
+        {...props}
+        style={cellStyle}>
+        <Tooltip title={column.name} placement="top-start" arrow>
+          {props.children}
+        </Tooltip>
+      </VirtualTable.Cell>
+    )
   }))
   if (isPending) { return null}
-  console.log('rows:', rows)
   return (
     <Box
       sx={{
