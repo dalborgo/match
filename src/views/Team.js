@@ -31,7 +31,7 @@ const compareWithNull = (a, b) => {
   const valB = !b ? 0 : b
   return valA - valB
 }
-const compareByRole = (roleA, roleB) => {
+export const compareByRole = (roleA, roleB) => {
   const priorityA = priority[roleA] || 5
   const priorityB = priority[roleB] || 5
   return priorityA - priorityB

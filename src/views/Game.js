@@ -2,8 +2,9 @@ import { useEffect, useMemo, useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { useParams } from 'react-router-dom'
 import { Box, FormControlLabel, Radio, RadioGroup, Tab, Tabs, TextField, Typography } from '@mui/material'
+import { compareByRole } from './Team'
 
-const formatPlayerName = (player) => {
+const formatPlayerName = player => {
   const [number, ...surnameParts] = player.title.split(' ')
   const surname = surnameParts.join(' ')
   return `${surname} ${number}`
@@ -105,7 +106,7 @@ function Game () {
     const surnameA = a.title.split(' ').slice(1).join(' ') // Estrai il cognome
     const surnameB = b.title.split(' ').slice(1).join(' ')
     return surnameA.localeCompare(surnameB)
-  })
+  }).sort((a, b) => compareByRole(a.roleAShort, b.roleAShort))
   const dividePlayersIntoColumns = (players, itemsPerColumn) => {
     const columns = []
     for (let i = 0; i < players.length; i += itemsPerColumn) {
@@ -193,7 +194,7 @@ function Game () {
                         value={formatPlayerName(player)} // Usa il nome formattato "Cognome N."
                         control={<Radio
                           onClick={() => handleRadioChange(formatPlayerName(player))}/>}
-                        label={formatPlayerName(player)}
+                        label={`${formatPlayerName(player)}${player.roleAShort ? ` (${player.roleAShort})` : ''}`}
                       /><br/>
                     </Box>
                   ))}
@@ -203,8 +204,12 @@ function Game () {
           </RadioGroup>
           <br/>
           {nameFeedback && (
-            <Typography variant="h4"
-                        style={{ color: nameFeedback.includes('OK') ? 'green' : 'red' }}>{nameFeedback.replace('OK', '')}</Typography>
+            <Typography
+              variant="h4"
+              style={{ color: nameFeedback.includes('OK') ? 'green' : 'red' }}
+            >
+              {nameFeedback.replace('OK', '')}
+            </Typography>
           )}
         </Box>
       )}
