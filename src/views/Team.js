@@ -52,7 +52,7 @@ const tableColumnExtensions = [
   { columnName: 'photoUrl', width: 60 },
   { columnName: 'title', width: 170 },
   { columnName: 'minutes_on_field', width: 60 },
-  { columnName: 'presences', width: 60 },
+  { columnName: 'appearances', width: 60 },
   { columnName: 'goal', width: 60 },
   { columnName: 'assist', width: 60 },
   { columnName: 'yellow_cards', width: 60 },
@@ -97,7 +97,7 @@ const Team = () => {
     { name: 'photoUrl', title: ' ' },
     { name: 'title', title: 'Nome' },
     { name: 'minutes_on_field', title: 'M.', getCellValue: row => row.stats.minutes_on_field },
-    { name: 'presences', title: 'P', getCellValue: row => row.stats.presences },
+    { name: 'appearances', title: 'P', getCellValue: row => row.stats.appearances },
     { name: 'goal', title: '⚽', getCellValue: row => row.stats.goal },
     { name: 'assist', title: 'A', getCellValue: row => row.stats.assist },
     { name: 'yellow_cards', title: '🟨', getCellValue: row => row.stats.yellow_cards },
@@ -118,7 +118,7 @@ const Team = () => {
     { columnName: 'roleAShort', compare: compareByRole },
     { columnName: 'title', compare: compareByName },
     { columnName: 'minutes_on_field', compare: compareWithNull },
-    { columnName: 'presences', compare: compareWithNull },
+    { columnName: 'appearances', compare: compareWithNull },
     { columnName: 'goal', compare: compareWithNull },
     { columnName: 'assist', compare: compareWithNull },
     { columnName: 'yellow_cards', compare: compareWithNull },
@@ -157,9 +157,11 @@ const Team = () => {
       borderColor: '#2f2f2f',
     }
     if (column.name === 'title') {
+      const career = row.stats?.career || {}
       return (
         <VirtualTable.Cell {...props} value={null} style={cellStyle}>
-          {value} <span style={{ color: '#b3b3b3' }}>{row.subtitle}</span>
+          <span style={{ color: career?.['Serie A']?.appearances ? 'gold' : undefined }}>{value}</span> <span
+          style={{ color: '#b3b3b3' }}>{row.subtitle}</span>
         </VirtualTable.Cell>
       )
     }
