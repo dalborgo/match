@@ -24,7 +24,8 @@
   },
   "scripts": {
     "start": "set PORT=3008&&react-scripts start",
-    "build": "react-scripts build"
+    "build": "react-scripts build",
+    "postbuild": "copy D:\\proj\\match\\server.js D:\\proj\\match\\build\\server.js"
   },
   "eslintConfig": {
     "extends": [
