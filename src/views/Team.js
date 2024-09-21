@@ -157,7 +157,7 @@ const Team = () => {
       borderColor: '#2f2f2f',
     }
     if (column.name === 'title') {
-      const career = row.stats?.career || {}
+      const career = row?.career || {}
       return (
         <VirtualTable.Cell {...props} value={null} style={cellStyle}>
           <span style={{ color: career?.['Serie A']?.['appearances'] ? 'gold' : undefined }}>{value}</span> <span
