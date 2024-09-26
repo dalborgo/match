@@ -55,7 +55,6 @@ const percentValues = [
 ]
 const PlayerStats = ({ teamId }) => {
   const { state: player = {} } = useLocation()
-  console.log('player.summary:', player.summary)
   const { playerId } = useParams()
   const navigate = useNavigate()
   const dtk = document.getElementById('dtk')?.value

@@ -51,6 +51,9 @@ const tableColumnExtensions = [
   { columnName: 'shirtNumber', width: 60 },
   { columnName: 'photoUrl', width: 60 },
   { columnName: 'title', width: 170 },
+  { columnName: 'market_value', width: 70, align: 'right' },
+  { columnName: 'age', width: 60 },
+  { columnName: 'height', width: 60 },
   { columnName: 'minutes_on_field', width: 60 },
   { columnName: 'appearances', width: 60 },
   { columnName: 'goal', width: 60 },
@@ -96,7 +99,10 @@ const Team = () => {
     { name: 'shirtNumber', title: 'N.' },
     { name: 'photoUrl', title: ' ' },
     { name: 'title', title: 'Nome' },
-    { name: 'minutes_on_field', title: 'M.', getCellValue: row => row.stats.minutes_on_field },
+    { name: 'market_value', title: '€', getCellValue: row => row.summary.market_value },
+    { name: 'age', title: 'Y', getCellValue: row => row.summary.age },
+    { name: 'height', title: 'H', getCellValue: row => row.summary.height || '' },
+    { name: 'minutes_on_field', title: 'M', getCellValue: row => row.stats.minutes_on_field },
     { name: 'appearances', title: 'P', getCellValue: row => row.stats.appearances },
     { name: 'goal', title: '⚽', getCellValue: row => row.stats.goal },
     { name: 'assist', title: 'A', getCellValue: row => row.stats.assist },
@@ -117,6 +123,7 @@ const Team = () => {
   const [integratedSortingColumnExtensions] = useState([
     { columnName: 'roleAShort', compare: compareByRole },
     { columnName: 'title', compare: compareByName },
+    { columnName: 'height', compare: compareWithNull },
     { columnName: 'minutes_on_field', compare: compareWithNull },
     { columnName: 'appearances', compare: compareWithNull },
     { columnName: 'goal', compare: compareWithNull },
@@ -145,6 +152,7 @@ const Team = () => {
   }, [id, queryClient])
   const rows = data?.results?.players || []
   const highestStats = data?.results?.highestStats || {}
+  const highestSummary = data?.results?.highestSummary || {}
   const toCopy = copyTeam(rows)
   const Cell = React.memo(props => {
     const { column, value, row } = props
@@ -162,6 +170,18 @@ const Team = () => {
         <VirtualTable.Cell {...props} value={null} style={cellStyle}>
           <span style={{ color: career?.['Serie A']?.['appearances'] ? 'gold' : undefined }}>{value}</span> <span
           style={{ color: '#b3b3b3' }}>{row.subtitle}</span>
+        </VirtualTable.Cell>
+      )
+    }
+    if (column.name === 'market_value') {
+      const isBest = highestSummary?.[column.name]?.['idPlayer'] === row.id
+      return (
+        <VirtualTable.Cell {...props} value={null} style={{
+          ...cellStyle,
+          color: isBest ? 'gold' : undefined,
+          fontWeight: isBest ? 'bold' : undefined,
+        }}>
+          {value ? value.toLocaleString('it-IT') : ''}
         </VirtualTable.Cell>
       )
     }
@@ -214,7 +234,7 @@ const Team = () => {
         </VirtualTable.Cell>
       )
     }
-    const isBest = highestStats?.[column.name]?.['idPlayer'] === row.id
+    const isBest = highestStats?.[column.name]?.['idPlayer'] === row.id || highestSummary?.[column.name]?.['idPlayer'] === row.id
     return (
       <VirtualTable.Cell {...props} style={{
         ...cellStyle,
