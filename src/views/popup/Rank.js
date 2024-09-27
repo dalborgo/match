@@ -61,7 +61,7 @@ const VideoList = ({ videos, teamName, hasResult }) => (
 const DownloadVideo = ({ videoA, videoB, teamAName, teamBName }) => {
   const handleDownload = () => {
     const outputA = videoA.map(video => {
-      const name = `${video['date'] ? `${video['date']}_` : ''}${teamAName}_${video['stat']}${video['player'] ? `${video['player']}_${video['time']}` : ''}`
+      const name = `${video['date'] ? `${video['date']}_` : ''}${teamAName}_${video['stat']}${video['player'] ? `_${video['player']}_${video['time']}` : ''}`
       return `nm=${video['link']}\ndr=20\nft=57\ntt=${name}\nbr!`
     })
     const toSave = outputA.join('\n')
