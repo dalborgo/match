@@ -1,5 +1,5 @@
 import React from 'react'
-import { Box, Modal, Typography } from '@mui/material'
+import { Box, Modal, TableCell, TableRow, Tooltip, Typography } from '@mui/material'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 import './wyscout.css'
@@ -9,7 +9,7 @@ const style = {
   top: '50%',
   left: '50%',
   width: 600,
-  height: 270,
+  height: 350,
   transform: 'translate(-50%, -50%)',
   bgcolor: 'background.paper',
   border: '2px solid #000',
@@ -53,6 +53,7 @@ const percentValues = [
   'secondary_position_percent',
   'third_position_percent'
 ]
+const allowedCompetitions = ['Serie A', 'Serie B', 'Serie C', 'Serie D']
 const PlayerStats = ({ teamId }) => {
   const { state: player = {} } = useLocation()
   const { playerId } = useParams()
@@ -64,6 +65,9 @@ const PlayerStats = ({ teamId }) => {
     staleTime: 5000,
   })
   if (isPending && dtk) {return null}
+  const filteredData = Object.entries(player?.career || {})
+    .filter(([key]) => allowedCompetitions.includes(key))
+    .sort(([keyA], [keyB]) => keyA.localeCompare(keyB))
   const positions = [...new Set([...player?.summary?.positions || [], ...player?.stats?.positions || []])]
   return (<Modal
       open={Boolean(true)}
@@ -74,20 +78,20 @@ const PlayerStats = ({ teamId }) => {
       <Box sx={style}>
         {
           dtk ?
-            <Box position="relative">
+            <Box position="relative" sx={{ top: 40 }}>
               <div dangerouslySetInnerHTML={{ __html: position.results }}/>
             </Box>
             :
-            <Box position="relative">
+            <Box position="relative" sx={{ top: 40 }}>
               <div className="gears-rel pitch-position"/>
             </Box>
         }
         <Box position="relative" sx={{ left: 170 }}>
           <Box mb={1}>
-            <Typography color={'secondary'} variant="h6" display={'inline'}>
+            <Typography color={'secondary'} variant="h6" display="inline">
               {player.shirtNumber ? `#${player.shirtNumber} ` : ''}
             </Typography>
-            <Typography color={'primary'} variant="h6" display={'inline'}>
+            <Typography color={'primary'} variant="h6" display="inline">
               {player.title}
             </Typography>
           </Box>
@@ -101,6 +105,30 @@ const PlayerStats = ({ teamId }) => {
                 </Box>
               )
             })
+          }
+        </Box>
+        <br/>
+        <Box position="relative" sx={{ left: 170 }}>
+          {
+            filteredData.length > 0 ? (
+              filteredData.map(([league, stats], index) => console.log(stats) || (
+                <Box key={index} display="flex" width={315}>
+                  <Box flex={1} sx={{ cursor: 'help' }}>
+                    <Tooltip title={stats.teamName?.join(', ')}>
+                      {league}
+                    </Tooltip>
+                  </Box>
+                  <Box flex={1} textAlign="right">{stats.appearances}</Box>
+                  <Box flex={1} textAlign="right">{stats.goal}</Box>
+                </Box>
+              ))
+            ) : (
+              <TableRow>
+                <TableCell colSpan={3} align="center">
+                  Nessun dato disponibile
+                </TableCell>
+              </TableRow>
+            )
           }
         </Box>
       </Box>

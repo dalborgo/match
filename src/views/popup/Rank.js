@@ -1,7 +1,8 @@
 import React from 'react'
-import { Box, Link, Modal, Typography } from '@mui/material'
+import { Box, IconButton, Link, Modal, Typography } from '@mui/material'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
+import DownloadIcon from '@mui/icons-material/Download'
 
 const style = {
   position: 'absolute',
@@ -57,6 +58,31 @@ const VideoList = ({ videos, teamName, hasResult }) => (
   </Box>
 )
 
+const DownloadVideo = ({ videoA, videoB, teamAName, teamBName }) => {
+  const handleDownload = () => {
+    const outputA = videoA.map(video => {
+      const name = `${video['date'] ? `${video['date']}_` : ''}${teamAName}_${video['stat']}${video['player'] ? `${video['player']}_${video['time']}` : ''}`
+      return `nm=${video['link']}\ndr=20\nft=57\ntt=${name}\nbr!`
+    })
+    const toSave = outputA.join('\n')
+    
+    const blob = new Blob([toSave], { type: 'text/plain' })
+    
+    const link = document.createElement('a')
+    link.href = URL.createObjectURL(blob)
+    link.download = `${teamAName}_${teamBName}_videos_list.zpl`
+    link.click()
+    
+    URL.revokeObjectURL(link.href)
+  }
+  
+  return (
+    <IconButton onClick={handleDownload} size="small">
+      <DownloadIcon/>
+    </IconButton>
+  )
+}
+
 const Rank = () => {
   const { matchId } = useParams()
   const { state: match = {} } = useLocation()
@@ -75,11 +101,9 @@ const Rank = () => {
       }}
     >
       <Box sx={style}>
-        <Box mb={1}>
-          <Typography variant="body2">
-            {matchId}
-          </Typography>
-          <Link
+        <Box mb={1} display="flex">
+          <Box flexGrow={1}>
+            Video: <Link
             href={download.results.link}
             sx={{
               cursor: 'pointer',
@@ -89,8 +113,10 @@ const Rank = () => {
               }
             }}
           >
-            Download
+            {matchId}
           </Link>
+          </Box>
+          <DownloadVideo videoA={videoA} videoB={videoB} teamAName={match.teamAName} teamBName={match.teamBName}/>
         </Box>
         <Box display="flex" justifyContent="space-between">
           <VideoList videos={videoA} teamName={match.teamAName} hasResult={hasResult}/>

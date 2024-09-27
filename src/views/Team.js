@@ -168,26 +168,6 @@ const Team = () => {
       const career = row?.career || {}
       return (
         <VirtualTable.Cell {...props} value={null} style={cellStyle}>
-          <span style={{ color: career?.['Serie A']?.['appearances'] ? 'gold' : undefined }}>{value}</span> <span
-          style={{ color: '#b3b3b3' }}>{row.subtitle}</span>
-        </VirtualTable.Cell>
-      )
-    }
-    if (column.name === 'market_value') {
-      const isBest = highestSummary?.[column.name]?.['idPlayer'] === row.id
-      return (
-        <VirtualTable.Cell {...props} value={null} style={{
-          ...cellStyle,
-          color: isBest ? 'gold' : undefined,
-          fontWeight: isBest ? 'bold' : undefined,
-        }}>
-          {value ? value.toLocaleString('it-IT') : ''}
-        </VirtualTable.Cell>
-      )
-    }
-    if (column.name === 'roleAShort') {
-      return (
-        <VirtualTable.Cell {...props} style={cellStyle}>
           <Link
             onClick={
               () => {
@@ -202,8 +182,21 @@ const Team = () => {
               }
             }}
           >
-            {value || '--'}
-          </Link>
+            <span style={{ color: career?.['Serie A']?.['appearances'] ? 'gold' : undefined }}>{value}</span>
+          </Link>&nbsp;
+          <span style={{ color: '#b3b3b3' }}>{row.subtitle}</span>
+        </VirtualTable.Cell>
+      )
+    }
+    if (column.name === 'market_value') {
+      const isBest = highestSummary?.[column.name]?.['idPlayer'] === row.id
+      return (
+        <VirtualTable.Cell {...props} value={null} style={{
+          ...cellStyle,
+          color: isBest ? 'gold' : undefined,
+          fontWeight: isBest ? 'bold' : undefined,
+        }}>
+          {value ? value.toLocaleString('it-IT') : ''}
         </VirtualTable.Cell>
       )
     }

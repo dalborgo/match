@@ -76,7 +76,7 @@ const Home = () => {
                   disabled={!next}>Successivo</Button>
         </Box>
         <Box>
-          {list.map((match, index) => console.log(match) || (
+          {list.map((match, index) => (
             <Box key={index} display="flex" justifyContent="space-between" alignItems="center"
                  sx={{ padding: 0, borderBottom: '1px solid #313131', paddingLeft: 1, paddingRight: 2 }}>
               <Typography
