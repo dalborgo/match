@@ -58,13 +58,11 @@ const PlayerStats = ({ teamId }) => {
   const { state: player = {} } = useLocation()
   const { playerId } = useParams()
   const navigate = useNavigate()
-  const dtk = document.getElementById('dtk')?.value
   const { isPending, data: position } = useQuery({
-    queryKey: [`position/${playerId}`, { dtk }],
-    enabled: Boolean(dtk),
+    queryKey: [`position/${playerId}`],
     staleTime: 5000,
   })
-  if (isPending && dtk) {return null}
+  if (isPending) {return null}
   const filteredData = Object.entries(player?.career || {})
     .filter(([key]) => allowedCompetitions.includes(key))
     .sort(([keyA], [keyB]) => keyA.localeCompare(keyB))
@@ -76,16 +74,9 @@ const PlayerStats = ({ teamId }) => {
       }}
     >
       <Box sx={style}>
-        {
-          dtk ?
-            <Box position="relative" sx={{ top: 40 }}>
-              <div dangerouslySetInnerHTML={{ __html: position.results }}/>
-            </Box>
-            :
-            <Box position="relative" sx={{ top: 40 }}>
-              <div className="gears-rel pitch-position"/>
-            </Box>
-        }
+        <Box position="relative" sx={{ top: 40 }}>
+          <div dangerouslySetInnerHTML={{ __html: position.results }}/>
+        </Box>
         <Box position="relative" sx={{ left: 170 }}>
           <Box mb={1}>
             <Typography color={'secondary'} variant="h6" display="inline">

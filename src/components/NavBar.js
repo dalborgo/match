@@ -44,23 +44,6 @@ const NavBar = () => {
             )
           }
         </Box>
-        
-        {/* TextField posizionata a destra */}
-        <Box sx={{ flexGrow: 0 }}>
-          <input
-            id="dtk"
-            style={{
-              backgroundColor: '#191919',
-              color: 'white',
-              width: '290px',
-              border: 'none',
-              padding: '8px',
-              borderRadius: '4px',
-              outline: 'none',
-            }}
-            onFocus={event => {event.target.select()}}
-          />
-        </Box>
       </Toolbar>
       
       {isFetching > 0 && (

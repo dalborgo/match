@@ -35,7 +35,7 @@ const Home = () => {
       const general = data?.results?.callbacks?.general || []
       const [first] = general
       const value = first?.params?.value
-      setInitPage(value.match(/\d+/)[0])
+      setInitPage(value?.match(/\d+/)[0])
     }
   }, [data, initPage, isSuccess])
   /* useEffect(() => {
