@@ -162,8 +162,8 @@ const Rank = ({ rank }) => {
   const { matchId } = useParams()
   const { state: match = {} } = useLocation()
   const navigate = useNavigate()
-  const hasResult = match.separator.length > 1
-  const currentRank = rank.find(rank => rank.roundName.includes('Girone A'))
+  const hasResult = match?.separator?.length > 1
+  const currentRank = rank?.find(rank => rank.roundName.includes(match.group))
   const { isPending, data: download } = useQuery({
     queryKey: [`download/${hasResult ? matchId : 0}`, { teamAId: match.teamAId, teamBId: match.teamBId }],
     staleTime: 5000,

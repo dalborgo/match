@@ -102,7 +102,7 @@ const PlayerStats = ({ teamId }) => {
         <Box position="relative" sx={{ left: 170 }}>
           {
             filteredData.length > 0 ? (
-              filteredData.map(([league, stats], index) => console.log(stats) || (
+              filteredData.map(([league, stats], index) => (
                 <Box key={index} display="flex" width={315}>
                   <Box flex={1} sx={{ cursor: 'help' }}>
                     <Tooltip title={stats.teamName?.join(', ')}>

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { Link as RouterLink, useNavigate, useParams } from 'react-router-dom'
 import { keepPreviousData, useQuery } from '@tanstack/react-query'
-import { Box, Button, Link, Typography } from '@mui/material'
+import { Box, Button, Link, Tooltip, Typography } from '@mui/material'
 import moment from 'moment'
 import { getSection } from '../files'
 import Rank from './popup/Rank'
@@ -11,13 +11,24 @@ function manageDate (date) {
 }
 
 function getTeamIdCodes (rank) {
-  const output = {}
+  const output = {}, output2 = {}
   for (let table of rank) {
     for (let item of table.items) {
       output[item['teamName']] = item['teamId']
+      output2[item['teamName']] = table['roundName']
     }
   }
-  return output
+  return [output, output2]
+}
+
+const getColor = group => {
+  if (group.includes('Girone A')) {
+    return '#81efdf'
+  } else if (group.includes('Girone B')) {
+    return '#ffd18a'
+  } else {
+    return '#ff94ef'
+  }
 }
 
 const Home = () => {
@@ -49,7 +60,7 @@ const Home = () => {
    }, [queryClient])*/
   if (isPending) {return null}
   const rank = data?.results?.rank || []
-  const teamIdCode = getTeamIdCodes(rank)
+  const [teamIdCode, roundNameCode] = getTeamIdCodes(rank)
   const list = data?.results?.list || []
   const general = data?.results?.callbacks?.general || []
   const [first] = general
@@ -103,6 +114,7 @@ const Home = () => {
                     navigate(`/${match['objId']}`, {
                       state: {
                         ...match,
+                        group: roundNameCode[match['teamAName']],
                         teamAId: teamIdCode[match['teamAName']],
                         teamBId: teamIdCode[match['teamBName']],
                       }
@@ -137,8 +149,46 @@ const Home = () => {
                 minWidth: '350px',
                 textAlign: 'left'
               }}>{match['referee']}{match['referee'] ? ` (${getSection(match['referee'])})` : ''}</Typography>
-              <Typography sx={{ minWidth: '200px', textAlign: 'right', fontStyle: 'italic', color: '#4caf50' }}>
-                {manageDate(match.data)}
+              
+              <Typography sx={{
+                minWidth: '80px',
+                textAlign: 'center'
+              }}> <Tooltip placement="left"
+                           title={`${match['matchStats']?.foulHome} / ${match['matchStats']?.foulAway}`}>
+                <span
+                  style={{ color: 'silver', cursor: 'help' }}>{match['matchStats']?.foulTotal || ''}</span></Tooltip>
+              </Typography>
+              
+              <Typography sx={{
+                minWidth: '80px',
+                textAlign: 'center'
+              }}> <Tooltip placement="left"
+                           title={`${match['matchStats']?.yellowHome} / ${match['matchStats']?.yellowAway}`}>
+                <span style={{ color: 'yellow', cursor: 'help' }}>{match['matchStats']?.yellowTotal || ''}</span>
+              </Tooltip></Typography>
+              
+              
+              <Typography sx={{
+                minWidth: '80px',
+                textAlign: 'center'
+              }}>
+                <Tooltip placement="left" title={`${match['matchStats']?.redHome} / ${match['matchStats']?.redAway}`}
+                         style={{}}>
+                  <span style={{ color: 'red', cursor: 'help' }}>{match['matchStats']?.redTotal || ''}</span></Tooltip>
+              </Typography>
+              <Typography sx={{
+                minWidth: '80px',
+                textAlign: 'center'
+              }}>
+                <Tooltip placement="left"
+                         title={`${match['matchStats']?.penaltyHome} / ${match['matchStats']?.penaltyAway}`}>
+                  <span style={{ color: 'cyan', cursor: 'help' }}>{match['matchStats']?.penaltyTotal || ''}</span>
+                </Tooltip>
+              </Typography>
+              
+              <Typography sx={{ minWidth: '250px', textAlign: 'right', fontStyle: 'italic', color: '#4caf50' }}>
+                {manageDate(match.data)} <span
+                style={{ color: getColor(roundNameCode[match['teamAName']]) }}>{roundNameCode[match['teamAName']].split(' - ')[1]}</span>
               </Typography>
             </Box>
           ))}
