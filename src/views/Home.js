@@ -144,7 +144,7 @@ const Home = () => {
           ))}
         </Box>
       </Box>
-      {matchId && <Rank/>}
+      {matchId && <Rank rank={rank}/>}
     </>
   )
 }
