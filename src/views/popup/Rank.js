@@ -81,14 +81,11 @@ const DownloadVideo = ({ videoA, videoB, teamAName, teamBName }) => {
       return `nm=${video['link']}\ndr=20\nft=57\ntt=${name}\nbr!`
     })
     const toSave = [...outputA, ...outputB].join('\n')
-  
     const blob = new Blob([toSave], { type: 'text/plain' })
-  
     const link = document.createElement('a')
     link.href = URL.createObjectURL(blob)
     link.download = `${teamAName}_${teamBName}_videos_list.zpl`
     link.click()
-  
     URL.revokeObjectURL(link.href)
   }
   
