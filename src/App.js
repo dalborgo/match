@@ -9,6 +9,7 @@ import axios from 'axios'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
 const PORT = envConfig['BACKEND_PORT']
+const HOST = envConfig['BACKEND_HOST']
 const darkTheme = createTheme({
   palette: {
     mode: 'dark',
@@ -17,7 +18,7 @@ const darkTheme = createTheme({
 
 const defaultQueryFn = async ({ queryKey }) => {
   const [endpoint, params] = queryKey
-  const { data } = await axios.get(`http://localhost:${PORT}/wyscout/${endpoint}`, { params })
+  const { data } = await axios.get(`http://${HOST}:${PORT}/wyscout/${endpoint}`, { params })
   return data
 }
 
