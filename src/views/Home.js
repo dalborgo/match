@@ -88,8 +88,19 @@ const Home = () => {
         </Box>
         <Box>
           {list.map((match, index) => (
-            <Box key={index} display="flex" justifyContent="space-between" alignItems="center"
-                 sx={{ padding: 0, borderBottom: '1px solid #313131', paddingLeft: 1, paddingRight: 2 }}>
+            <Box
+              key={index}
+              display="flex"
+              justifyContent="space-between"
+              alignItems="center"
+              sx={{
+                padding: 0,
+                borderBottom: '1px solid #313131',
+                paddingLeft: 1,
+                paddingRight: 2,
+                flexWrap: 'wrap', // Consente una migliore gestione dello spazio
+              }}
+            >
               <Typography
                 color="inherit"
                 component={RouterLink}
@@ -99,37 +110,37 @@ const Home = () => {
                   '&:hover': {
                     textDecoration: 'underline'
                   },
-                  minWidth: '200px',
-                  textAlign: 'right'
-                }}>
+                  flexBasis: '150px',
+                  flexGrow: 1,
+                  textAlign: 'right',
+                  maxWidth: '200px',
+                }}
+              >
                 {match['teamAName']}
               </Typography>
               <Link
-                onClick={
-                  async () => {
-                    /*const queryKey = [`download/${match['objId']}`]
-                      if (!queryClient.getQueryData(queryKey)) {
-                        await queryClient.prefetchQuery(queryKey, { throwOnError: true })
-                      }*/
-                    navigate(`/${match['objId']}`, {
-                      state: {
-                        ...match,
-                        group: roundNameCode[match['teamAName']],
-                        teamAId: teamIdCode[match['teamAName']],
-                        teamBId: teamIdCode[match['teamBName']],
-                      }
-                    })
-                  }
-                }
+                onClick={async () => {
+                  navigate(`/${match['objId']}`, {
+                    state: {
+                      ...match,
+                      group: roundNameCode[match['teamAName']],
+                      teamAId: teamIdCode[match['teamAName']],
+                      teamBId: teamIdCode[match['teamBName']],
+                    }
+                  })
+                }}
                 sx={{
                   cursor: 'pointer',
                   textDecoration: 'none',
                   '&:hover': {
                     textDecoration: 'underline'
-                  }
+                  },
+                  flexGrow: 0,
+                  minWidth: '50px',
+                  textAlign: 'center'
                 }}
               >
-                <Typography sx={{ minWidth: '50px', textAlign: 'center' }}>{match.separator}</Typography>
+                <Typography>{match.separator}</Typography>
               </Link>
               <Typography
                 color="inherit"
@@ -140,55 +151,44 @@ const Home = () => {
                   '&:hover': {
                     textDecoration: 'underline'
                   },
-                  minWidth: '200px',
-                  textAlign: 'left'
-                }}>
+                  flexBasis: '150px',
+                  flexGrow: 1,
+                  textAlign: 'left',
+                  maxWidth: '200px',
+                }}
+              >
                 {match['teamBName']}
               </Typography>
-              <Typography sx={{
-                minWidth: '350px',
-                textAlign: 'left'
-              }}>{match['referee']}{match['referee'] ? ` (${getSection(match['referee'])})` : ''}</Typography>
-              
-              <Typography sx={{
-                minWidth: '80px',
-                textAlign: 'center'
-              }}> <Tooltip placement="left"
-                           title={`${match['matchStats']?.foulHome} / ${match['matchStats']?.foulAway}`}>
-                <span
-                  style={{ color: 'silver', cursor: 'help' }}>{match['matchStats']?.foulTotal || ''}</span></Tooltip>
+              <Typography sx={{ flexBasis: '200px', flexGrow: 1, textAlign: 'left', maxWidth: '350px' }}>
+                {match['referee']}{match['referee'] ? ` (${getSection(match['referee'])})` : ''}
               </Typography>
-              
-              <Typography sx={{
-                minWidth: '80px',
-                textAlign: 'center'
-              }}> <Tooltip placement="left"
-                           title={`${match['matchStats']?.yellowHome} / ${match['matchStats']?.yellowAway}`}>
-                <span style={{ color: 'yellow', cursor: 'help' }}>{match['matchStats']?.yellowTotal || ''}</span>
-              </Tooltip></Typography>
-              
-              
-              <Typography sx={{
-                minWidth: '80px',
-                textAlign: 'center'
-              }}>
-                <Tooltip placement="left" title={`${match['matchStats']?.redHome} / ${match['matchStats']?.redAway}`}
-                         style={{}}>
-                  <span style={{ color: 'red', cursor: 'help' }}>{match['matchStats']?.redTotal || ''}</span></Tooltip>
+              <Typography sx={{ flexBasis: '60px', textAlign: 'center', maxWidth: '80px' }}>
+                <Tooltip placement="left" title={`${match['matchStats']?.foulHome} / ${match['matchStats']?.foulAway}`}>
+                  <span style={{ color: 'silver', cursor: 'help' }}>{match['matchStats']?.foulTotal || ''}</span>
+                </Tooltip>
               </Typography>
-              <Typography sx={{
-                minWidth: '80px',
-                textAlign: 'center'
-              }}>
+              <Typography sx={{ flexBasis: '60px', textAlign: 'center', maxWidth: '80px' }}>
+                <Tooltip placement="left"
+                         title={`${match['matchStats']?.yellowHome} / ${match['matchStats']?.yellowAway}`}>
+                  <span style={{ color: 'yellow', cursor: 'help' }}>{match['matchStats']?.yellowTotal || ''}</span>
+                </Tooltip>
+              </Typography>
+              <Typography sx={{ flexBasis: '60px', textAlign: 'center', maxWidth: '80px' }}>
+                <Tooltip placement="left" title={`${match['matchStats']?.redHome} / ${match['matchStats']?.redAway}`}>
+                  <span style={{ color: 'red', cursor: 'help' }}>{match['matchStats']?.redTotal || ''}</span>
+                </Tooltip>
+              </Typography>
+              <Typography sx={{ flexBasis: '60px', textAlign: 'center', maxWidth: '80px' }}>
                 <Tooltip placement="left"
                          title={`${match['matchStats']?.penaltyHome} / ${match['matchStats']?.penaltyAway}`}>
                   <span style={{ color: 'cyan', cursor: 'help' }}>{match['matchStats']?.penaltyTotal || ''}</span>
                 </Tooltip>
               </Typography>
-              
-              <Typography sx={{ minWidth: '250px', textAlign: 'right', fontStyle: 'italic', color: '#4caf50' }}>
-                {manageDate(match.data)} <span
-                style={{ color: getColor(roundNameCode[match['teamAName']]) }}>{roundNameCode[match['teamAName']].split(' - ')[1]}</span>
+              <Typography sx={{ flexBasis: '230px', textAlign: 'right', fontStyle: 'italic', color: '#4caf50' }}>
+                {manageDate(match.data)}{' '}
+                <span style={{ color: getColor(roundNameCode[match['teamAName']]) }}>
+                  {roundNameCode[match['teamAName']].split(' - ')[1]}
+                </span>
               </Typography>
             </Box>
           ))}

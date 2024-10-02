@@ -99,15 +99,15 @@ const Team = () => {
     { name: 'shirtNumber', title: 'N.' },
     { name: 'photoUrl', title: ' ' },
     { name: 'title', title: 'Nome' },
-    { name: 'market_value', title: '€', getCellValue: row => row.summary.market_value },
     { name: 'age', title: 'Y', getCellValue: row => row.summary.age },
     { name: 'height', title: 'H', getCellValue: row => row.summary.height || '' },
+    { name: 'market_value', title: '€', getCellValue: row => row.summary.market_value },
     { name: 'minutes_on_field', title: 'M', getCellValue: row => row.stats.minutes_on_field },
     { name: 'appearances', title: 'P', getCellValue: row => row.stats.appearances },
     { name: 'goal', title: '⚽', getCellValue: row => row.stats.goal },
     { name: 'assist', title: 'A', getCellValue: row => row.stats.assist },
-    { name: 'yellow_cards', title: '🟨', getCellValue: row => row.stats.yellow_cards },
-    { name: 'red_cards', title: '🟥', getCellValue: row => row.stats.red_cards },
+    { name: 'yellow_cards', title: '█', getCellValue: row => row.stats.yellow_cards },
+    { name: 'red_cards', title: '█', getCellValue: row => row.stats.red_cards },
     { name: 'foul', title: 'F', getCellValue: row => row.stats.foul },
     { name: 'dangerous_foul', title: 'DF', getCellValue: row => row.stats.dangerous_foul },
     { name: 'protest_foul', title: 'PF', getCellValue: row => row.stats.protest_foul },
@@ -257,7 +257,14 @@ const Team = () => {
         </VirtualTable.Cell>
       )
     }
-    
+    if (['yellow_cards', 'red_cards'].includes(column.name)) {
+      return (
+        <VirtualTable.Cell {...props}
+                           style={{ ...cellStyle, color: column.name === 'yellow_cards' ? 'yellow' : 'red' }}>
+          {props.children}
+        </VirtualTable.Cell>
+      )
+    }
     return (
       <VirtualTable.Cell
         {...props}

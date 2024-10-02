@@ -32,14 +32,44 @@ const style = {
 const selectIcon = stat => {
   switch (stat) {
     case 'yellow_card':
-      return '🟨'
+      return (<span style={{ color: 'yellow' }}>█</span>)
     case 'red_card':
-      return '🟥'
+      return (<span style={{ color: 'red' }}>█</span>)
     case 'Corner_conceded':
       return 'Corner subito'
     default:
       return ''
   }
+}
+
+const TeamLogo = ({ team }) => {
+  const handleDownloadInBackground = () => {
+    const tempDiv = document.createElement('div')
+    tempDiv.innerHTML = team.thumb
+    
+    const imgElement = tempDiv.querySelector('img')
+    
+    if (imgElement) {
+      const imgURL = imgElement.src
+      
+      const newWindow = window.open(imgURL, '_blank', 'noopener,noreferrer')
+      
+      if (newWindow) {
+        newWindow.blur()
+        window.focus()
+      }
+    } else {
+      console.error('Nessuna immagine trovata nel contenuto HTML.')
+    }
+  }
+  
+  return (
+    <div className="team-logo" style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}
+         onClick={handleDownloadInBackground}>
+      <div dangerouslySetInnerHTML={{ __html: team.thumb }} style={{ marginRight: 8 }}/>
+      {team.teamName}
+    </div>
+  )
 }
 
 const VideoList = ({ videos, teamName, hasResult }) => (
@@ -133,10 +163,7 @@ const Ranking = ({ rank, teamA, teamB }) => {
             >
               <TableCell>{team.rank}</TableCell>
               <TableCell>
-                <div className="team-logo" style={{ display: 'flex', alignItems: 'center' }}>
-                  <div dangerouslySetInnerHTML={{ __html: team.thumb }} style={{ marginRight: 8 }}/>
-                  {team.teamName}
-                </div>
+                <TeamLogo team={team}/>
               </TableCell>
               <TableCell align="center">{team.matchTotal}</TableCell>
               <TableCell align="center">{team.matchWon}</TableCell>
