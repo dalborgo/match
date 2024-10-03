@@ -186,7 +186,7 @@ const Home = () => {
                   <span style={{ color: 'cyan', cursor: 'help' }}>{match['matchStats']?.penaltyTotal || ''}</span>
                 </Tooltip>
               </Typography>
-              <Typography sx={{ flexBasis: '230px', textAlign: 'right', fontStyle: 'italic', color: '#4caf50' }}>
+              <Typography sx={{ flexBasis: '250px', textAlign: 'right', fontStyle: 'italic', color: '#4caf50' }}>
                 {manageDate(match.data)}{' '}
                 <span style={{ color: getColor(roundNameCode[match['teamAName']]) }}>
                   {roundNameCode[match['teamAName']].split(' - ')[1]}
