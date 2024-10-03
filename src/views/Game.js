@@ -16,8 +16,34 @@ function Game () {
     queryKey: [`grid/${id}`],
     staleTime: 300000,
   })
+  const excludeUndefinedMinutes = true
+  const players = useMemo(() => {
+    const filteredPlayers = (data?.results?.players || [])
+      .filter(player => player.shirtNumber)
+    
+    const uniquePlayers = filteredPlayers.reduce((acc, player) => {
+      const existingPlayer = acc.find(p => p.shirtNumber === player.shirtNumber)
+      
+      if (!existingPlayer) {
+        acc.push(player)
+      } else if (player.stats.minutes_on_field > existingPlayer.stats.minutes_on_field) {
+        acc = acc.filter(p => p.shirtNumber !== player.shirtNumber).concat(player)
+      } else if (
+        !excludeUndefinedMinutes &&
+        (existingPlayer.stats.minutes_on_field === null || player.stats.minutes_on_field === null ||
+         player.stats.minutes_on_field === existingPlayer.stats.minutes_on_field)
+      ) {
+        acc.push(player)
+      }
+      
+      return acc
+    }, [])
+    
+    return excludeUndefinedMinutes
+      ? uniquePlayers.filter(player => player.stats.minutes_on_field !== null && player.stats.minutes_on_field !== undefined)
+      : uniquePlayers
+  }, [data?.results?.players, excludeUndefinedMinutes])
   
-  const players = useMemo(() => (data?.results?.players || []).filter(player => player.shirtNumber), [data?.results?.players])
   const [currentPlayer, setCurrentPlayer] = useState(null)
   const [userInput, setUserInput] = useState('')
   const [feedback, setFeedback] = useState('')
