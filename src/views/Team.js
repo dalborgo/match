@@ -87,6 +87,8 @@ const Root = props => <Grid.Root {...props} style={{ height: '100%' }}/>
 const Team = () => {
   const { id, playerId } = useParams()
   const queryClient = useQueryClient()
+  const location = useLocation()
+  const state = location.state || {}
   const { isPending, data } = useQuery({
     queryKey: [`grid/${id}`],
     staleTime: 300000,
@@ -154,7 +156,6 @@ const Team = () => {
     }
   }, [id, queryClient])
   const rows = data?.results?.players || []
-  console.log('rows:', rows)
   const highestStats = data?.results?.highestStats || {}
   const highestSummary = data?.results?.highestSummary || {}
   const toCopy = copyTeam(rows)
@@ -167,8 +168,8 @@ const Team = () => {
       padding: theme.spacing(1),
       whiteSpace: 'normal',
       borderColor: '#2f2f2f',
+      height: 42,
     }
-    console.log('row:', row)
     if (column.name === 'title') {
       const career = row?.career || {}
       return (
@@ -182,7 +183,7 @@ const Team = () => {
           <Link
             onClick={
               () => {
-                navigate(`${pathname}/player/${row.id}`, { state: { ...row } })
+                navigate(`${pathname}/player/${row.id}`, { state: { ...row, teamName: state.teamName } })
               }
             }
             sx={{

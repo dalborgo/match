@@ -98,13 +98,14 @@ const Home = () => {
                 borderBottom: '1px solid #313131',
                 paddingLeft: 1,
                 paddingRight: 2,
-                flexWrap: 'wrap', // Consente una migliore gestione dello spazio
+                flexWrap: 'wrap',
               }}
             >
               <Typography
                 color="inherit"
                 component={RouterLink}
                 to={`/team/${teamIdCode[match['teamAName']]}`}
+                state={{ teamName: match['teamAName'] }}
                 sx={{
                   textDecoration: 'none',
                   '&:hover': {
@@ -146,6 +147,7 @@ const Home = () => {
                 color="inherit"
                 component={RouterLink}
                 to={`/team/${teamIdCode[match['teamBName']]}`}
+                state={{ teamName: match['teamBName'] }}
                 sx={{
                   textDecoration: 'none',
                   '&:hover': {

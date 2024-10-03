@@ -7,7 +7,7 @@ const NavBar = () => {
   const isFetching = useIsFetching()
   const { pathname } = location
   const id = pathname.split('/')[2]
-  
+  const { teamName } = location.state || {}
   return (
     <AppBar position="fixed">
       <Toolbar variant="dense" disableGutters style={{ paddingLeft: 8, paddingRight: 8 }}>
@@ -44,8 +44,10 @@ const NavBar = () => {
             )
           }
         </Box>
+        <Box mr={1}>
+          {teamName}
+        </Box>
       </Toolbar>
-      
       {isFetching > 0 && (
         <LinearProgress
           color="primary"

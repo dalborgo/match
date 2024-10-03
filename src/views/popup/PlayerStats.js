@@ -70,7 +70,7 @@ const PlayerStats = ({ teamId }) => {
   return (<Modal
       open={Boolean(true)}
       onClose={() => {
-        navigate(`/team/${teamId}`)
+        navigate(`/team/${teamId}`, { state: { teamName: player['teamName'] } })
       }}
     >
       <Box sx={style}>
