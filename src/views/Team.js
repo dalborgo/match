@@ -7,6 +7,7 @@ import { Avatar, Box, Link, Tooltip } from '@mui/material'
 import { CopyToClipboard } from 'react-copy-to-clipboard'
 import { useTheme, withStyles } from '@mui/styles'
 import PlayerStats from './popup/PlayerStats'
+import { getArea } from './helpers'
 
 const shouldDisplayAvatar = photoUrl => {
   return photoUrl && !photoUrl.includes('ndplayer')
@@ -153,6 +154,7 @@ const Team = () => {
     }
   }, [id, queryClient])
   const rows = data?.results?.players || []
+  console.log('rows:', rows)
   const highestStats = data?.results?.highestStats || {}
   const highestSummary = data?.results?.highestSummary || {}
   const toCopy = copyTeam(rows)
@@ -166,10 +168,17 @@ const Team = () => {
       whiteSpace: 'normal',
       borderColor: '#2f2f2f',
     }
+    console.log('row:', row)
     if (column.name === 'title') {
       const career = row?.career || {}
       return (
         <VirtualTable.Cell {...props} value={null} style={cellStyle}>
+          <img
+            src={`https://cdn5.wyscout.com/photos/area/public/${row['flag']}_180x120.jpg`}
+            style={{ width: 15, cursor: 'help' }}
+            alt="flag"
+            title={getArea(row['flag'])}
+          />&nbsp;
           <Link
             onClick={
               () => {
