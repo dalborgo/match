@@ -7,7 +7,7 @@ const NavBar = () => {
   const isFetching = useIsFetching()
   const { pathname } = location
   const id = pathname.split('/')[2]
-  const { teamName } = location.state || {}
+  const state = location.state || {}
   return (
     <AppBar position="fixed">
       <Toolbar variant="dense" disableGutters style={{ paddingLeft: 8, paddingRight: 8 }}>
@@ -26,6 +26,7 @@ const NavBar = () => {
                 color={location.pathname.includes('/team') ? 'secondary' : 'inherit'}
                 component={Link}
                 to={`/team/${id}`}
+                state={state}
               >
                 Team
               </Button>
@@ -38,6 +39,7 @@ const NavBar = () => {
                 color={location.pathname.includes('/game') ? 'secondary' : 'inherit'}
                 component={Link}
                 to={`/game/${id}`}
+                state={state}
               >
                 Game
               </Button>
@@ -45,7 +47,7 @@ const NavBar = () => {
           }
         </Box>
         <Box mr={1}>
-          {teamName}
+          {state.teamName}
         </Box>
       </Toolbar>
       {isFetching > 0 && (

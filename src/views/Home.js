@@ -1,10 +1,15 @@
 import React, { useEffect, useState } from 'react'
 import { Link as RouterLink, useNavigate, useParams } from 'react-router-dom'
-import { keepPreviousData, useQuery } from '@tanstack/react-query'
+import { keepPreviousData, useQuery, useQueryClient } from '@tanstack/react-query'
 import { Box, Button, Link, Tooltip, Typography } from '@mui/material'
 import moment from 'moment'
 import { getSection } from '../files'
 import Rank from './popup/Rank'
+import axios from 'axios'
+import { envConfig } from '../init'
+
+const PORT = envConfig['BACKEND_PORT']
+const HOST = envConfig['BACKEND_HOST']
 
 function manageDate (date) {
   return moment(date.replace(' CEST', ''), 'DD/MM/YYYY HH:mm').format('dddd DD/MM HH:mm')
@@ -29,6 +34,54 @@ const getColor = group => {
   } else {
     return '#ff94ef'
   }
+}
+
+export const getVideoListName = (video, teamAName) => {
+  const name = `${video['date'] ? `${video['date']}_` : ''}${teamAName}_${video['stat']}${video['player'] ? `_${video['player']}_${video['time']}` : ''}`
+  return `nm=${video['link']}\ndr=20\nft=57\ntt=${name}\nbr!`
+}
+
+function DownloadPdfButton ({ matchId, teamAId, teamBId, teamAName, teamBName, stat, children, style = {} }) {
+  const queryClient = useQueryClient()
+  const downloadPdf = async () => {
+    const [dataA, dataB] = await queryClient.fetchQuery({
+      queryKey: [`video/${teamAId}${teamBId}/match/${matchId}`, { stat }],
+      queryFn: async () => {
+        const responseA = await axios.get(`http://${HOST}:${PORT}/wyscout/video/${teamAId}/match/${matchId}?stat=${stat}`)
+        const responseB = await axios.get(`http://${HOST}:${PORT}/wyscout/video/${teamBId}/match/${matchId}?stat=${stat}`)
+        return [responseA.data, responseB.data]
+      },
+      meta: { isManualFetching: true }
+    })
+    const outputA = dataA.results.map(video => {
+      return getVideoListName(video, teamAName)
+    })
+    const outputB = dataB.results.map(video => {
+      return getVideoListName(video, teamBName)
+    })
+    const toSave = [...outputA, ...outputB].join('\n')
+    const blob = new Blob([toSave], { type: 'text/plain' })
+    const link = document.createElement('a')
+    link.href = URL.createObjectURL(blob)
+    link.download = `${matchId}_${stat}_videos_list.zpl`
+    link.click()
+    URL.revokeObjectURL(link.href)
+  }
+  
+  return (
+    <Link
+      onClick={downloadPdf}
+      sx={{
+        ...style,
+        cursor: 'pointer',
+        textDecoration: 'none',
+        '&:hover': {
+          textDecoration: 'underline'
+        }
+      }}>
+      {children}
+    </Link>
+  )
 }
 
 const Home = () => {
@@ -170,15 +223,35 @@ const Home = () => {
                 </Tooltip>
               </Typography>
               <Typography sx={{ flexBasis: '60px', textAlign: 'center', maxWidth: '80px' }}>
-                <Tooltip placement="left"
-                         title={`${match['matchStats']?.yellowHome} / ${match['matchStats']?.yellowAway}`}>
-                  <span style={{ color: 'yellow', cursor: 'help' }}>{match['matchStats']?.yellowTotal || ''}</span>
-                </Tooltip>
+                <DownloadPdfButton
+                  style={{ color: 'yellow' }}
+                  matchId={match['objId']}
+                  teamAName={match['teamAName']}
+                  teamBName={match['teamBName']}
+                  teamAId={teamIdCode[match['teamAName']]}
+                  teamBId={teamIdCode[match['teamBName']]}
+                  stat="yellow_cards"
+                >
+                  <Tooltip placement="left"
+                           title={`${match['matchStats']?.yellowHome} / ${match['matchStats']?.yellowAway}`}>
+                    <span style={{ color: 'yellow', cursor: 'help' }}>{match['matchStats']?.yellowTotal || ''}</span>
+                  </Tooltip>
+                </DownloadPdfButton>
               </Typography>
               <Typography sx={{ flexBasis: '60px', textAlign: 'center', maxWidth: '80px' }}>
-                <Tooltip placement="left" title={`${match['matchStats']?.redHome} / ${match['matchStats']?.redAway}`}>
-                  <span style={{ color: 'red', cursor: 'help' }}>{match['matchStats']?.redTotal || ''}</span>
-                </Tooltip>
+                <DownloadPdfButton
+                  style={{ color: 'red' }}
+                  matchId={match['objId']}
+                  teamAName={match['teamAName']}
+                  teamBName={match['teamBName']}
+                  teamAId={teamIdCode[match['teamAName']]}
+                  teamBId={teamIdCode[match['teamBName']]}
+                  stat="red_cards"
+                >
+                  <Tooltip placement="left" title={`${match['matchStats']?.redHome} / ${match['matchStats']?.redAway}`}>
+                    <span style={{ color: 'red', cursor: 'help' }}>{match['matchStats']?.redTotal || ''}</span>
+                  </Tooltip>
+                </DownloadPdfButton>
               </Typography>
               <Typography sx={{ flexBasis: '60px', textAlign: 'center', maxWidth: '80px' }}>
                 <Tooltip placement="left"

@@ -13,9 +13,15 @@ import {
   Typography
 } from '@mui/material'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 import DownloadIcon from '@mui/icons-material/Download'
+import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf'
+import axios from 'axios'
+import { envConfig } from '../../init'
+import { getVideoListName } from '../Home'
 
+const PORT = envConfig['BACKEND_PORT']
+const HOST = envConfig['BACKEND_HOST']
 const style = {
   position: 'absolute',
   top: '50%',
@@ -100,15 +106,42 @@ const VideoList = ({ videos, teamName, hasResult }) => (
   </Box>
 )
 
+function DownloadPdfButton ({ matchId }) {
+  const queryClient = useQueryClient()
+  const downloadPdf = async () => {
+    const data = await queryClient.fetchQuery({
+      queryKey: [`print/${matchId}`],
+      queryFn: async () => {
+        const response = await axios.get(`http://${HOST}:${PORT}/wyscout/print/${matchId}`, {
+          responseType: 'blob'
+        })
+        return response.data
+      },
+      meta: { isManualFetching: true }
+    })
+    const url = window.URL.createObjectURL(new Blob([data]))
+    const link = document.createElement('a')
+    link.href = url
+    link.setAttribute('download', `report_${matchId}.pdf`)
+    document.body.appendChild(link)
+    link.click()
+    link.remove()
+  }
+  
+  return (
+    <Box>
+      <IconButton onClick={downloadPdf}><PictureAsPdfIcon/></IconButton>
+    </Box>
+  )
+}
+
 const DownloadVideo = ({ videoA, videoB, teamAName, teamBName }) => {
   const handleDownload = () => {
     const outputA = videoA.map(video => {
-      const name = `${video['date'] ? `${video['date']}_` : ''}${teamAName}_${video['stat']}${video['player'] ? `_${video['player']}_${video['time']}` : ''}`
-      return `nm=${video['link']}\ndr=20\nft=57\ntt=${name}\nbr!`
+      return getVideoListName(video, teamAName)
     })
     const outputB = videoB.map(video => {
-      const name = `${video['date'] ? `${video['date']}_` : ''}${teamBName}_${video['stat']}${video['player'] ? `_${video['player']}_${video['time']}` : ''}`
-      return `nm=${video['link']}\ndr=20\nft=57\ntt=${name}\nbr!`
+      return getVideoListName(video, teamBName)
     })
     const toSave = [...outputA, ...outputB].join('\n')
     const blob = new Blob([toSave], { type: 'text/plain' })
@@ -120,7 +153,7 @@ const DownloadVideo = ({ videoA, videoB, teamAName, teamBName }) => {
   }
   
   return (
-    <IconButton onClick={handleDownload} size="small">
+    <IconButton onClick={handleDownload}>
       <DownloadIcon/>
     </IconButton>
   )
@@ -217,6 +250,10 @@ const Rank = ({ rank }) => {
               {matchId}
             </Link>
             </Box>
+            {
+              hasResult &&
+              <DownloadPdfButton matchId={matchId}/>
+            }
             <DownloadVideo videoA={videoA} videoB={videoB} teamAName={match.teamAName} teamBName={match.teamBName}/>
           </Box>
           <Box display="flex">
