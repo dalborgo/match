@@ -84,6 +84,60 @@ function DownloadPdfButton ({ matchId, teamAId, teamBId, teamAName, teamBName, s
   )
 }
 
+function DownloadPdfButtonList ({ list, stat, children, style = {} }) {
+  const queryClient = useQueryClient()
+  
+  const downloadPdf = async () => {
+    let allVideosList = []
+    
+    for (const match of list) {
+      const { teamAId, teamBId, matchId, teamAName, teamBName } = match
+      
+      try {
+        const [dataA, dataB] = await queryClient.fetchQuery({
+          queryKey: [`video/${teamAId}${teamBId}/match/${matchId}`, { stat }],
+          queryFn: async () => {
+            const responseA = await axios.get(`http://${HOST}:${PORT}/wyscout/video/${teamAId}/match/${matchId}?stat=${stat}`)
+            const responseB = await axios.get(`http://${HOST}:${PORT}/wyscout/video/${teamBId}/match/${matchId}?stat=${stat}`)
+            return [responseA.data, responseB.data]
+          },
+          meta: { isManualFetching: true }
+        })
+        
+        const outputA = dataA.results.map(video => getVideoListName(video, teamAName))
+        const outputB = dataB.results.map(video => getVideoListName(video, teamBName))
+        
+        allVideosList = [...allVideosList, ...outputA, ...outputB]
+      } catch (error) {
+        console.error(`Errore durante il fetch dei dati per la partita ${matchId}:`, error)
+      }
+    }
+    
+    const toSave = allVideosList.join('\n')
+    const blob = new Blob([toSave], { type: 'text/plain' })
+    const link = document.createElement('a')
+    link.href = URL.createObjectURL(blob)
+    link.download = `videos_list.zpl`
+    link.click()
+    URL.revokeObjectURL(link.href)
+  }
+  
+  return (
+    <Link
+      onClick={downloadPdf}
+      sx={{
+        ...style,
+        cursor: 'pointer',
+        textDecoration: 'none',
+        '&:hover': {
+          textDecoration: 'underline'
+        }
+      }}>
+      {children}
+    </Link>
+  )
+}
+
 const Home = () => {
   const [page, setPage] = useState('0')
   const [initPage, setInitPage] = useState('')
@@ -121,6 +175,7 @@ const Home = () => {
   const next_ = general.find(item => item?.params?.params?.transition === 'next')
   const prev = prev_ ? prev_.params.params['period'].split('_')[1] : null
   const next = next_ ? next_.params.params['period'].split('_')[1] : null
+  const totalRedCards = []
   return (
     <>
       <Box
@@ -140,133 +195,150 @@ const Home = () => {
                   disabled={!next}>Successivo</Button>
         </Box>
         <Box>
-          {list.map((match, index) => (
-            <Box
-              key={index}
-              display="flex"
-              justifyContent="space-between"
-              alignItems="center"
-              sx={{
-                padding: 0,
-                borderBottom: '1px solid #313131',
-                paddingLeft: 1,
-                paddingRight: 2,
-                flexWrap: 'wrap',
-              }}
-            >
-              <Typography
-                color="inherit"
-                component={RouterLink}
-                to={`/team/${teamIdCode[match['teamAName']]}`}
-                state={{ teamName: match['teamAName'] }}
-                sx={{
-                  textDecoration: 'none',
-                  '&:hover': {
-                    textDecoration: 'underline'
-                  },
-                  flexBasis: '150px',
-                  flexGrow: 1,
-                  textAlign: 'right',
-                  maxWidth: '200px',
-                }}
-              >
-                {match['teamAName']}
-              </Typography>
-              <Link
-                onClick={async () => {
-                  navigate(`/${match['objId']}`, {
-                    state: {
-                      ...match,
-                      group: roundNameCode[match['teamAName']],
-                      teamAId: teamIdCode[match['teamAName']],
-                      teamBId: teamIdCode[match['teamBName']],
-                    }
-                  })
-                }}
-                sx={{
-                  cursor: 'pointer',
-                  textDecoration: 'none',
-                  '&:hover': {
-                    textDecoration: 'underline'
-                  },
-                  flexGrow: 0,
-                  minWidth: '50px',
-                  textAlign: 'center'
-                }}
-              >
-                <Typography>{match.separator}</Typography>
-              </Link>
-              <Typography
-                color="inherit"
-                component={RouterLink}
-                to={`/team/${teamIdCode[match['teamBName']]}`}
-                state={{ teamName: match['teamBName'] }}
-                sx={{
-                  textDecoration: 'none',
-                  '&:hover': {
-                    textDecoration: 'underline'
-                  },
-                  flexBasis: '150px',
-                  flexGrow: 1,
-                  textAlign: 'left',
-                  maxWidth: '200px',
-                }}
-              >
-                {match['teamBName']}
-              </Typography>
-              <Typography sx={{ flexBasis: '200px', flexGrow: 1, textAlign: 'left', maxWidth: '350px' }}>
-                {match['referee']}{match['referee'] ? ` (${getSection(match['referee'])})` : ''}
-              </Typography>
-              <Typography sx={{ flexBasis: '60px', textAlign: 'center', maxWidth: '80px' }}>
-                <Tooltip placement="left" title={`${match['matchStats']?.foulHome} / ${match['matchStats']?.foulAway}`}>
-                  <span style={{ color: 'silver', cursor: 'help' }}>{match['matchStats']?.foulTotal || ''}</span>
-                </Tooltip>
-              </Typography>
-              <Typography sx={{ flexBasis: '60px', textAlign: 'center', maxWidth: '80px' }}>
-                <DownloadPdfButton
-                  style={{ color: 'yellow' }}
-                  matchId={match['objId']}
-                  teamAName={match['teamAName']}
-                  teamBName={match['teamBName']}
-                  teamAId={teamIdCode[match['teamAName']]}
-                  teamBId={teamIdCode[match['teamBName']]}
-                  stat="yellow_cards"
+          {
+            list.map((match, index) => {
+              if (match['matchStats']?.redTotal) {
+                totalRedCards.push({
+                  teamAName: match['teamAName'],
+                  teamBName: match['teamBName'],
+                  teamAId: teamIdCode[match['teamAName']],
+                  teamBId: teamIdCode[match['teamBName']],
+                  matchId: match['objId'],
+                })
+              }
+              return (
+                <Box
+                  key={index}
+                  display="flex"
+                  justifyContent="space-between"
+                  alignItems="center"
+                  sx={{
+                    padding: 0,
+                    borderBottom: '1px solid #313131',
+                    paddingLeft: 1,
+                    paddingRight: 2,
+                    flexWrap: 'wrap',
+                  }}
                 >
-                  <Tooltip placement="left"
-                           title={`${match['matchStats']?.yellowHome} / ${match['matchStats']?.yellowAway}`}>
-                    <span style={{ color: 'yellow', cursor: 'help' }}>{match['matchStats']?.yellowTotal || ''}</span>
-                  </Tooltip>
-                </DownloadPdfButton>
-              </Typography>
-              <Typography sx={{ flexBasis: '60px', textAlign: 'center', maxWidth: '80px' }}>
-                <DownloadPdfButton
-                  style={{ color: 'red' }}
-                  matchId={match['objId']}
-                  teamAName={match['teamAName']}
-                  teamBName={match['teamBName']}
-                  teamAId={teamIdCode[match['teamAName']]}
-                  teamBId={teamIdCode[match['teamBName']]}
-                  stat="red_cards"
-                >
-                  <Tooltip placement="left" title={`${match['matchStats']?.redHome} / ${match['matchStats']?.redAway}`}>
-                    <span style={{ color: 'red', cursor: 'help' }}>{match['matchStats']?.redTotal || ''}</span>
-                  </Tooltip>
-                </DownloadPdfButton>
-              </Typography>
-              <Typography sx={{ flexBasis: '60px', textAlign: 'center', maxWidth: '80px' }}>
-                <Tooltip placement="left"
-                         title={`${match['matchStats']?.penaltyHome} / ${match['matchStats']?.penaltyAway}`}>
-                  <span style={{ color: 'cyan', cursor: 'help' }}>{match['matchStats']?.penaltyTotal || ''}</span>
-                </Tooltip>
-              </Typography>
-              <Typography sx={{ flexBasis: '250px', textAlign: 'right', fontStyle: 'italic', color: '#4caf50' }}>
-                {manageDate(match.data)}{' '}
-                <span style={{ color: getColor(roundNameCode[match['teamAName']]) }}>
-                  {roundNameCode[match['teamAName']].split(' - ')[1]}
-                </span>
-              </Typography>
-            </Box>
-          ))}
+                  <Typography
+                    color="inherit"
+                    component={RouterLink}
+                    to={`/team/${teamIdCode[match['teamAName']]}`}
+                    state={{ teamName: match['teamAName'] }}
+                    sx={{
+                      textDecoration: 'none',
+                      '&:hover': {
+                        textDecoration: 'underline'
+                      },
+                      flexBasis: '150px',
+                      flexGrow: 1,
+                      textAlign: 'right',
+                      maxWidth: '200px',
+                    }}
+                  >
+                    {match['teamAName']}
+                  </Typography>
+                  <Link
+                    onClick={async () => {
+                      navigate(`/${match['objId']}`, {
+                        state: {
+                          ...match,
+                          group: roundNameCode[match['teamAName']],
+                          teamAId: teamIdCode[match['teamAName']],
+                          teamBId: teamIdCode[match['teamBName']],
+                        }
+                      })
+                    }}
+                    sx={{
+                      cursor: 'pointer',
+                      textDecoration: 'none',
+                      '&:hover': {
+                        textDecoration: 'underline'
+                      },
+                      flexGrow: 0,
+                      minWidth: '50px',
+                      textAlign: 'center'
+                    }}
+                  >
+                    <Typography>{match?.separator.replace('<span>(Rinviata)</span>', 'rinv.')}</Typography>
+                  </Link>
+                  <Typography
+                    color="inherit"
+                    component={RouterLink}
+                    to={`/team/${teamIdCode[match['teamBName']]}`}
+                    state={{ teamName: match['teamBName'] }}
+                    sx={{
+                      textDecoration: 'none',
+                      '&:hover': {
+                        textDecoration: 'underline'
+                      },
+                      flexBasis: '150px',
+                      flexGrow: 1,
+                      textAlign: 'left',
+                      maxWidth: '200px',
+                    }}
+                  >
+                    {match['teamBName']}
+                  </Typography>
+                  <Typography sx={{ flexBasis: '200px', flexGrow: 1, textAlign: 'left', maxWidth: '350px' }}>
+                    {match['referee']}{match['referee'] ? ` (${getSection(match['referee'])})` : ''}
+                  </Typography>
+                  <Typography sx={{ flexBasis: '60px', textAlign: 'center', maxWidth: '80px' }}>
+                    <Tooltip placement="left"
+                             title={`${match['matchStats']?.foulHome} / ${match['matchStats']?.foulAway}`}>
+                      <span style={{ color: 'silver', cursor: 'help' }}>{match['matchStats']?.foulTotal || ''}</span>
+                    </Tooltip>
+                  </Typography>
+                  <Typography sx={{ flexBasis: '60px', textAlign: 'center', maxWidth: '80px' }}>
+                    <DownloadPdfButton
+                      style={{ color: 'yellow' }}
+                      matchId={match['objId']}
+                      teamAName={match['teamAName']}
+                      teamBName={match['teamBName']}
+                      teamAId={teamIdCode[match['teamAName']]}
+                      teamBId={teamIdCode[match['teamBName']]}
+                      stat="yellow_cards"
+                    >
+                      <Tooltip placement="left"
+                               title={`${match['matchStats']?.yellowHome} / ${match['matchStats']?.yellowAway}`}>
+                        <span
+                          style={{ color: 'yellow', cursor: 'help' }}>{match['matchStats']?.yellowTotal || ''}</span>
+                      </Tooltip>
+                    </DownloadPdfButton>
+                  </Typography>
+                  <Typography sx={{ flexBasis: '60px', textAlign: 'center', maxWidth: '80px' }}>
+                    <DownloadPdfButton
+                      style={{ color: 'red' }}
+                      matchId={match['objId']}
+                      teamAName={match['teamAName']}
+                      teamBName={match['teamBName']}
+                      teamAId={teamIdCode[match['teamAName']]}
+                      teamBId={teamIdCode[match['teamBName']]}
+                      stat="red_cards"
+                    >
+                      <Tooltip placement="left"
+                               title={`${match['matchStats']?.redHome} / ${match['matchStats']?.redAway}`}>
+                        <span style={{ color: 'red', cursor: 'help' }}>{match['matchStats']?.redTotal || ''}</span>
+                      </Tooltip>
+                    </DownloadPdfButton>
+                  </Typography>
+                  <Typography sx={{ flexBasis: '60px', textAlign: 'center', maxWidth: '80px' }}>
+                    <Tooltip placement="left"
+                             title={`${match['matchStats']?.penaltyHome} / ${match['matchStats']?.penaltyAway}`}>
+                      <span style={{ color: 'cyan', cursor: 'help' }}>{match['matchStats']?.penaltyTotal || ''}</span>
+                    </Tooltip>
+                  </Typography>
+                  <Typography sx={{ flexBasis: '250px', textAlign: 'right', fontStyle: 'italic', color: '#4caf50' }}>
+                    {manageDate(match.data)}{' '}
+                    <span style={{ color: getColor(roundNameCode[match['teamAName']]) }}>
+                      {roundNameCode[match['teamAName']].split(' - ')[1]}
+                    </span>
+                  </Typography>
+                </Box>)
+            })}
+        </Box>
+        <Box pr={2} textAlign="right" pt={0.5}>
+          <DownloadPdfButtonList list={totalRedCards} stat="red_cards"><span style={{color: 'red', fontSize: 'small'}}>█</span></DownloadPdfButtonList>
         </Box>
       </Box>
       {matchId && <Rank rank={rank}/>}

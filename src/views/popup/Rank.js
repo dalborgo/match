@@ -15,6 +15,7 @@ import {
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import DownloadIcon from '@mui/icons-material/Download'
+import CloseIcon from '@mui/icons-material/Close'
 import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf'
 import axios from 'axios'
 import { envConfig } from '../../init'
@@ -23,16 +24,11 @@ import { getVideoListName } from '../Home'
 const PORT = envConfig['BACKEND_PORT']
 const HOST = envConfig['BACKEND_HOST']
 const style = {
-  position: 'absolute',
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
-  width: 1200,
+  height: '100%',
   bgcolor: 'background.paper',
-  border: '2px solid #000',
-  boxShadow: 24,
-  p: 2,
+  overflow: 'auto',
   outline: 'none',
+  padding: 2,
 }
 
 const selectIcon = stat => {
@@ -227,11 +223,10 @@ const Rank = ({ rank }) => {
   })
   if (isPending) {return null}
   const { videoA, videoB } = download.results
-  return (<Modal
+  return (
+    <Modal
       open={Boolean(true)}
-      onClose={() => {
-        navigate('/')
-      }}
+      onClose={() => navigate('/')}
     >
       <Box sx={style}>
         <Box>
@@ -255,6 +250,7 @@ const Rank = ({ rank }) => {
               <DownloadPdfButton matchId={matchId}/>
             }
             <DownloadVideo videoA={videoA} videoB={videoB} teamAName={match.teamAName} teamBName={match.teamBName}/>
+            <IconButton onClick={() => navigate('/')}><CloseIcon/></IconButton>
           </Box>
           <Box display="flex">
             <VideoList videos={videoA} teamName={match.teamAName} hasResult={hasResult}/>
