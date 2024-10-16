@@ -117,7 +117,7 @@ function DownloadPdfButtonList ({ list, stat, children, style = {} }) {
     const blob = new Blob([toSave], { type: 'text/plain' })
     const link = document.createElement('a')
     link.href = URL.createObjectURL(blob)
-    link.download = `videos_list.zpl`
+    link.download = `${stat}_videos_list.zpl`
     link.click()
     URL.revokeObjectURL(link.href)
   }
