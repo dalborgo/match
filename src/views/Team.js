@@ -158,6 +158,7 @@ const Team = () => {
   const rows = data?.results?.players || []
   const highestStats = data?.results?.highestStats || {}
   const highestSummary = data?.results?.highestSummary || {}
+  const minMinutes = data?.results?.minMinutes || {}
   const toCopy = copyTeam(rows)
   const Cell = React.memo(props => {
     const { column, value, row } = props
@@ -197,6 +198,17 @@ const Team = () => {
             <span style={{ color: career?.['Serie A']?.['appearances'] ? 'gold' : undefined }}>{value}</span>
           </Link>&nbsp;
           <span style={{ color: '#b3b3b3' }}>{row.subtitle}</span>
+        </VirtualTable.Cell>
+      )
+    }
+    if (column.name === 'minutes_on_field') {
+      const isBest = highestStats?.[column.name]?.['idPlayer'] === row.id
+      return (
+        <VirtualTable.Cell {...props} value={null} style={{
+          ...cellStyle,
+          color: isBest ? 'gold' : value > minMinutes ? 'cyan' : undefined,
+        }}>
+          {value}
         </VirtualTable.Cell>
       )
     }
