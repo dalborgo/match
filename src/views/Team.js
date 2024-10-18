@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { IntegratedSorting, SortingState, } from '@devexpress/dx-react-grid'
-import { Grid, TableHeaderRow, VirtualTable, } from '@devexpress/dx-react-grid-material-ui'
+import { Grid, TableFixedColumns, TableHeaderRow, VirtualTable, } from '@devexpress/dx-react-grid-material-ui'
 import { Avatar, Box, Link, Tooltip } from '@mui/material'
 import { CopyToClipboard } from 'react-copy-to-clipboard'
 import { useTheme, withStyles } from '@mui/styles'
@@ -150,6 +150,7 @@ const Team = () => {
   const [sortingStateColumnExtensions] = useState([
     { columnName: 'photoUrl', sortingEnabled: false },
   ])
+  const [leftColumns] = useState(['roleAShort', 'shirtNumber', 'title', 'photoUrl'])
   useEffect(() => {
     return () => {
       queryClient.cancelQueries({ queryKey: [`grid/${id}`] })
@@ -161,7 +162,7 @@ const Team = () => {
   const minMinutes = data?.results?.minMinutes || {}
   const toCopy = copyTeam(rows)
   const Cell = React.memo(props => {
-    const { column, value, row } = props
+    const { column, value, row, style, ...otherProps } = props
     const theme = useTheme()
     const { pathname } = useLocation()
     const navigate = useNavigate()
@@ -171,10 +172,11 @@ const Team = () => {
       borderColor: '#2f2f2f',
       height: 42,
     }
+    const combinedStyle = { ...style, ...cellStyle }
     if (column.name === 'title') {
       const career = row?.career || {}
       return (
-        <VirtualTable.Cell {...props} value={null} style={cellStyle}>
+        <VirtualTable.Cell style={combinedStyle} {...otherProps} value={null}>
           <img
             src={`https://cdn5.wyscout.com/photos/area/public/${row['flag']}_180x120.jpg`}
             style={{ width: 15, cursor: 'help' }}
@@ -226,10 +228,12 @@ const Team = () => {
     }
     if (column.name === 'photoUrl') {
       if (!shouldDisplayAvatar(value)) {
-        return <VirtualTable.Cell {...props} value={null} style={cellStyle}/>
+        return <VirtualTable.Cell style={combinedStyle}
+                                  {...otherProps} value={null}/>
       }
       return (
-        <VirtualTable.Cell  {...props} style={cellStyle}>
+        <VirtualTable.Cell style={combinedStyle}
+                           {...otherProps} >
           <Tooltip
             title={<img src={value} alt="img" style={{
               width: 'auto',
@@ -253,26 +257,30 @@ const Team = () => {
     }
     const isBest = highestStats?.[column.name]?.['idPlayer'] === row.id || highestSummary?.[column.name]?.['idPlayer'] === row.id
     return (
-      <VirtualTable.Cell {...props} style={{
-        ...cellStyle,
-        color: isBest ? 'gold' : undefined,
-        fontWeight: isBest ? 'bold' : undefined,
-      }}>
+      <VirtualTable.Cell
+        style={{
+          ...combinedStyle,
+          color: isBest ? 'gold' : undefined,
+          fontWeight: isBest ? 'bold' : undefined,
+        }}
+        {...otherProps}
+      >
         {value}
       </VirtualTable.Cell>
     )
   })
   
   const Head = React.memo(withStyles(null, { withTheme: true })(props => {
-    const { column, theme } = props
+    const { column, theme, style, ...otherProps } = props
     const cellStyle = {
       padding: theme.spacing(1),
       borderBottom: 0,
       backgroundColor: '#191919'
     }
+    const combinedStyle = { ...style, ...cellStyle }
     if (column.name === 'photoUrl') {
       return (
-        <VirtualTable.Cell {...props} style={cellStyle}>
+        <VirtualTable.Cell style={combinedStyle}{...otherProps} >
           <CopyToClipboard text={toCopy}>
             <span style={{ fontSize: 'small', cursor: 'pointer', marginTop: -6, marginLeft: 4 }}>📋</span>
           </CopyToClipboard>
@@ -289,8 +297,9 @@ const Team = () => {
     }
     return (
       <VirtualTable.Cell
-        {...props}
-        style={cellStyle}>
+        style={combinedStyle}
+        {...otherProps}
+      >
         <Tooltip title={column.name} placement="top-start" arrow>
           {props.children}
         </Tooltip>
@@ -328,6 +337,9 @@ const Team = () => {
           messages={{
             'sortingHint': undefined,
           }}
+        />
+        <TableFixedColumns
+          leftColumns={leftColumns}
         />
       </Grid>
       {playerId && <PlayerStats teamId={id}/>}
