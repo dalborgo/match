@@ -169,6 +169,7 @@ const Team = () => {
     const cellStyle = {
       padding: theme.spacing(1),
       whiteSpace: 'normal',
+      borderRight: 0,
       borderColor: '#2f2f2f',
       height: 42,
     }
@@ -274,7 +275,7 @@ const Team = () => {
     const { column, theme, style, ...otherProps } = props
     const cellStyle = {
       padding: theme.spacing(1),
-      borderBottom: 0,
+      border: 0,
       backgroundColor: '#191919'
     }
     const combinedStyle = { ...style, ...cellStyle }
