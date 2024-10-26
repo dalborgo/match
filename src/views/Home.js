@@ -27,6 +27,7 @@ function getTeamIdCodes (rank) {
 }
 
 const getColor = group => {
+  if (!group) {return}
   if (group.includes('Girone A')) {
     return '#81efdf'
   } else if (group.includes('Girone B')) {
@@ -331,14 +332,15 @@ const Home = () => {
                   <Typography sx={{ flexBasis: '250px', textAlign: 'right', fontStyle: 'italic', color: '#4caf50' }}>
                     {manageDate(match.data)}{' '}
                     <span style={{ color: getColor(roundNameCode[match['teamAName']]) }}>
-                      {roundNameCode[match['teamAName']].split(' - ')[1]}
+                      {roundNameCode[match['teamAName']]?.split(' - ')?.[1]}
                     </span>
                   </Typography>
                 </Box>)
             })}
         </Box>
         <Box pr={2} textAlign="right" pt={0.5}>
-          <DownloadPdfButtonList list={totalRedCards} stat="red_cards"><span style={{color: 'red', fontSize: 'small'}}>█</span></DownloadPdfButtonList>
+          <DownloadPdfButtonList list={totalRedCards} stat="red_cards"><span
+            style={{ color: 'red', fontSize: 'small' }}>█</span></DownloadPdfButtonList>
         </Box>
       </Box>
       {matchId && <Rank rank={rank}/>}
