@@ -104,29 +104,40 @@ const VideoList = ({ videos, teamName, hasResult }) => (
 
 function DownloadPdfButton ({ matchId }) {
   const queryClient = useQueryClient()
-  const downloadPdf = async () => {
-    const data = await queryClient.fetchQuery({
-      queryKey: [`print/${matchId}`],
-      queryFn: async () => {
-        const response = await axios.get(`http://${HOST}:${PORT}/wyscout/print/${matchId}`, {
-          responseType: 'blob'
-        })
-        return response.data
-      },
-      meta: { isManualFetching: true }
-    })
-    const url = window.URL.createObjectURL(new Blob([data]))
-    const link = document.createElement('a')
-    link.href = url
-    link.setAttribute('download', `report_${matchId}.pdf`)
-    document.body.appendChild(link)
-    link.click()
-    link.remove()
-  }
   
+  const openPdfInNewTab = async () => {
+    try {
+      const data = await queryClient.fetchQuery({
+        queryKey: [`print/${matchId}`],
+        queryFn: async () => {
+          const response = await axios.get(`http://${HOST}:${PORT}/wyscout/print/${matchId}`, {
+            responseType: 'blob'
+          })
+          return response.data
+        },
+        meta: { isManualFetching: true }
+      })
+      const reader = new FileReader()
+      reader.onloadend = () => {
+        const dataUrl = reader.result
+        const pdfWindow = window.open(dataUrl, '_blank') // Apre il PDF in una nuova scheda
+        
+        if (!pdfWindow) {
+          console.error('Impossibile aprire la nuova scheda per il PDF')
+        } else {
+          pdfWindow.focus()
+        }
+      }
+      reader.onerror = () => console.error('Errore nella conversione del blob in data URL')
+      reader.readAsDataURL(data)
+      
+    } catch (error) {
+      console.error('Download failed:', error)
+    }
+  }
   return (
     <Box>
-      <IconButton onClick={downloadPdf}><PictureAsPdfIcon/></IconButton>
+      <IconButton onClick={openPdfInNewTab}><PictureAsPdfIcon/></IconButton>
     </Box>
   )
 }
@@ -213,15 +224,17 @@ const Ranking = ({ rank, teamA, teamB }) => {
 
 const Rank = ({ rank }) => {
   const { matchId } = useParams()
-  const { state: match = {} } = useLocation()
+  const { state: match_ = {} } = useLocation()
+  const match = match_ || {}
   const navigate = useNavigate()
   const hasResult = match?.separator?.length > 1
-  const currentRank = rank?.find(rank => rank.roundName.includes(match.group))
   const { isPending, data: download } = useQuery({
+    enabled: Boolean(match_),
     queryKey: [`download/${hasResult ? matchId : 0}`, { teamAId: match.teamAId, teamBId: match.teamBId }],
     staleTime: 5000,
   })
   if (isPending) {return null}
+  const currentRank = rank?.find(rank => rank.roundName.includes(match.group))
   const { videoA, videoB } = download.results
   return (
     <Modal
