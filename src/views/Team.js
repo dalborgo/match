@@ -89,6 +89,12 @@ const Team = () => {
   const queryClient = useQueryClient()
   const location = useLocation()
   const state = location.state || {}
+  const [openTooltipImage, setOpenTooltipImage] = useState('')
+  
+  const handleToggleTooltipImage = event => {
+    const name = event.target.parentElement.getAttribute('id')
+    setOpenTooltipImage(prev => prev === name ? '' : name)
+  }
   const { isPending, data } = useQuery({
     queryKey: [`grid/${id}`],
     staleTime: 300000,
@@ -236,15 +242,19 @@ const Team = () => {
         <VirtualTable.Cell style={combinedStyle}
                            {...otherProps} >
           <Tooltip
+            onClose={() => setOpenTooltipImage('')}
+            open={openTooltipImage === `Avatar_${row.id}`}
+            placement="top"
             title={<img src={value} alt="img" style={{
               width: 'auto',
               height: 'auto',
               maxWidth: '200px',
               maxHeight: '200px'
             }}/>}
-            placement="top"
           >
             <Avatar
+              id={`Avatar_${row.id}`}
+              onClick={handleToggleTooltipImage}
               src={value}
               style={{
                 width: 24,
