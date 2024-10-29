@@ -157,15 +157,6 @@ const Home = () => {
       setInitPage(value?.match(/\d+/)[0])
     }
   }, [data, initPage, isSuccess])
-  /* useEffect(() => {
-     async function fetchData () {
-       await queryClient.prefetchQuery({
-         queryKey: ['rank'],
-       }, { throwOnError: true })
-     }
-     
-     fetchData().then().catch(error => {setState(() => {throw error})})
-   }, [queryClient])*/
   if (isPending) {return null}
   const rank = data?.results?.rank || []
   const [teamIdCode, roundNameCode] = getTeamIdCodes(rank)

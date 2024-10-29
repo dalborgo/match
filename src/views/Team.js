@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { IntegratedSorting, SortingState, } from '@devexpress/dx-react-grid'
@@ -48,30 +48,37 @@ const compareByName = (a, b) => {
 }
 
 const tableColumnExtensions = [
-  { columnName: 'roleAShort', width: 70 },
-  { columnName: 'shirtNumber', width: 55 },
-  { columnName: 'photoUrl', width: 55 },
+  { columnName: 'roleAShort', width: 60 },
+  { columnName: 'shirtNumber', width: 50 },
+  { columnName: 'photoUrl', width: 45 },
   { columnName: 'title', width: 170 },
   { columnName: 'market_value', width: 70, align: 'right' },
-  { columnName: 'age', width: 60 },
-  { columnName: 'height', width: 60 },
-  { columnName: 'minutes_on_field', width: 60 },
-  { columnName: 'appearances', width: 60 },
-  { columnName: 'goal', width: 60 },
-  { columnName: 'assist', width: 55 },
-  { columnName: 'yellow_cards', width: 60 },
-  { columnName: 'red_cards', width: 60 },
-  { columnName: 'foul', width: 55 },
-  { columnName: 'dangerous_foul', width: 60 },
-  { columnName: 'protest_foul', width: 60 },
-  { columnName: 'penalty_foul', width: 60 },
-  { columnName: 'tackle', width: 55 },
-  { columnName: 'pressing_duel', width: 60 },
-  { columnName: 'opponent_half_recovery', width: 60 },
-  { columnName: 'progressive_run', width: 55 },
-  { columnName: 'dribble', width: 55 },
-  { columnName: 'shot_from_outside_area', width: 60 },
-  { columnName: 'foul_suffered', width: 60 },
+  { columnName: 'age', width: 50 },
+  { columnName: 'height', width: 50 },
+  { columnName: 'minutes_on_field', width: 52 },
+  { columnName: 'appearances', width: 56 },
+  { columnName: 'goal', width: 56 },
+  { columnName: 'assist', width: 50 },
+  { columnName: 'yellow_cards', width: 52 },
+  { columnName: 'red_cards', width: 52 },
+  { columnName: 'corner', width: 50 },
+  { columnName: 'free_kick_shot', width: 56 },
+  { columnName: 'progressive_run', width: 50 },
+  { columnName: 'dribble', width: 50 },
+  { columnName: 'shot_from_outside_area', width: 58 },
+  { columnName: 'pass_to_final_third_success', width: 56 },
+  { columnName: 'foul', width: 52 },
+  { columnName: 'dangerous_foul', width: 56 },
+  { columnName: 'tackle', width: 50 },
+  { columnName: 'pressing_duel', width: 58 },
+  { columnName: 'opponent_half_recovery', width: 58 },
+  { columnName: 'time_lost_foul', width: 56 },
+  { columnName: 'violent_foul', width: 58 },
+  { columnName: 'out_of_play_foul', width: 58 },
+  { columnName: 'simulation_foul', width: 56 },
+  { columnName: 'protest_foul', width: 56 },
+  { columnName: 'penalty_foul', width: 56 },
+  { columnName: 'aerial_duel', width: 58 },
 ]
 
 const copyTeam = rows => {
@@ -86,6 +93,7 @@ const copyTeam = rows => {
 const Root = props => <Grid.Root {...props} style={{ height: '100%' }}/>
 const Team = () => {
   const { id, playerId } = useParams()
+  const [statSelector, setStatSelector] = useState('SUMMARY')
   const queryClient = useQueryClient()
   const location = useLocation()
   const state = location.state || {}
@@ -99,37 +107,71 @@ const Team = () => {
     queryKey: [`grid/${id}`],
     staleTime: 300000,
   })
-  const [columns] = useState([
-    {
-      name: 'roleAShort',
-      title: 'R.',
-      getCellValue: row => !row.roleAShort && !row.shirtNumber ? 'ALL' : row.roleAShort
-    },
-    { name: 'shirtNumber', title: 'N.' },
-    { name: 'photoUrl', title: ' ' },
-    { name: 'title', title: 'Nome' },
-    { name: 'age', title: 'Y', getCellValue: row => row.summary.age },
-    { name: 'height', title: 'H', getCellValue: row => row.summary.height || '' },
-    { name: 'market_value', title: '€', getCellValue: row => row.summary.market_value },
-    { name: 'minutes_on_field', title: 'M', getCellValue: row => row.stats.minutes_on_field },
-    { name: 'appearances', title: 'P', getCellValue: row => row.stats.appearances },
-    { name: 'goal', title: '⚽', getCellValue: row => row.stats.goal },
-    { name: 'assist', title: 'A', getCellValue: row => row.stats.assist },
-    { name: 'yellow_cards', title: '█', getCellValue: row => row.stats.yellow_cards },
-    { name: 'red_cards', title: '█', getCellValue: row => row.stats.red_cards },
-    { name: 'foul', title: 'F', getCellValue: row => row.stats.foul },
-    { name: 'dangerous_foul', title: 'DF', getCellValue: row => row.stats.dangerous_foul },
-    { name: 'protest_foul', title: 'PF', getCellValue: row => row.stats.protest_foul },
-    { name: 'penalty_foul', title: 'PE', getCellValue: row => row.stats.penalty_foul },
-    { name: 'tackle', title: 'T', getCellValue: row => row.stats.tackle },
-    { name: 'pressing_duel', title: 'PD', getCellValue: row => row.stats.pressing_duel },
-    { name: 'opponent_half_recovery', title: 'OR', getCellValue: row => row.stats.opponent_half_recovery },
-    { name: 'progressive_run', title: 'R', getCellValue: row => row.stats.progressive_run },
-    { name: 'dribble', title: 'D', getCellValue: row => row.stats.dribble },
-    { name: 'shot_from_outside_area', title: 'SO', getCellValue: row => row.stats.shot_from_outside_area },
-    { name: 'foul_suffered', title: 'FS', getCellValue: row => row.stats.foul_suffered },
-    { name: 'pass_to_final_third_success', title: 'PF', getCellValue: row => row.stats.pass_to_final_third_success },
-  ])
+  const columns = useMemo(() => {
+    const summary = [
+      {
+        name: 'roleAShort',
+        title: 'R',
+        getCellValue: row => !row.roleAShort && !row.shirtNumber ? 'ALL' : row.roleAShort
+      },
+      { name: 'shirtNumber', title: 'N' },
+      { name: 'photoUrl', title: ' ' },
+      { name: 'title', title: 'Nome' },
+      { name: 'age', title: 'Y', getCellValue: row => row.summary.age },
+      { name: 'height', title: 'H', getCellValue: row => row.summary.height || '' },
+      { name: 'market_value', title: '€', getCellValue: row => row.summary.market_value },
+      { name: 'minutes_on_field', title: 'M', getCellValue: row => row.stats.minutes_on_field },
+      { name: 'appearances', title: 'P', getCellValue: row => row.stats.appearances },
+      { name: 'goal', title: '⚽', getCellValue: row => row.stats.goal },
+      { name: 'assist', title: 'A', getCellValue: row => row.stats.assist },
+      { name: 'yellow_cards', title: '█', getCellValue: row => row.stats.yellow_cards },
+      { name: 'red_cards', title: '█', getCellValue: row => row.stats.red_cards },
+      { name: 'corner', title: 'C', getCellValue: row => row.stats.corner },
+      { name: 'free_kick_shot', title: 'FK', getCellValue: row => row.stats.free_kick_shot },
+      { name: 'progressive_run', title: 'R', getCellValue: row => row.stats.progressive_run },
+      { name: 'dribble', title: 'D', getCellValue: row => row.stats.dribble },
+      { name: 'shot_from_outside_area', title: 'SO', getCellValue: row => row.stats.shot_from_outside_area },
+      { name: 'pass_to_final_third_success', title: 'PF', getCellValue: row => row.stats.pass_to_final_third_success },
+      { name: 'foul', title: 'F', getCellValue: row => row.stats.foul },
+      { name: 'dangerous_foul', title: 'DF', getCellValue: row => row.stats.dangerous_foul },
+      { name: 'tackle', title: 'T', getCellValue: row => row.stats.tackle },
+      { name: 'opponent_half_recovery', title: 'OR', getCellValue: row => row.stats.opponent_half_recovery },
+      { name: 'pressing_duel', title: 'PD', getCellValue: row => row.stats.pressing_duel },
+      { name: 'aerial_duel', title: 'AD', getCellValue: row => row.stats.aerial_duel },
+      { name: 'foul_suffered', title: 'FS', getCellValue: row => row.stats.foul_suffered },
+    ]
+    const disciplinary = [
+      {
+        name: 'roleAShort',
+        title: 'R',
+        getCellValue: row => !row.roleAShort && !row.shirtNumber ? 'ALL' : row.roleAShort
+      },
+      { name: 'shirtNumber', title: 'N' },
+      { name: 'photoUrl', title: ' ' },
+      { name: 'title', title: 'Nome' },
+      { name: 'age', title: 'Y', getCellValue: row => row.summary.age },
+      { name: 'height', title: 'H', getCellValue: row => row.summary.height || '' },
+      { name: 'market_value', title: '€', getCellValue: row => row.summary.market_value },
+      { name: 'minutes_on_field', title: 'M', getCellValue: row => row.stats.minutes_on_field },
+      { name: 'appearances', title: 'P', getCellValue: row => row.stats.appearances },
+      { name: 'yellow_cards', title: '█', getCellValue: row => row.stats.yellow_cards },
+      { name: 'red_cards', title: '█', getCellValue: row => row.stats.red_cards },
+      { name: 'foul', title: 'F', getCellValue: row => row.stats.foul },
+      { name: 'dangerous_foul', title: 'DF', getCellValue: row => row.stats.dangerous_foul },
+      { name: 'violent_foul', title: 'VF', getCellValue: row => row.stats.violent_foul },
+      { name: 'out_of_play_foul', title: 'OF', getCellValue: row => row.stats.out_of_play_foul },
+      { name: 'protest_foul', title: 'PF', getCellValue: row => row.stats.protest_foul },
+      { name: 'simulation_foul', title: 'SF', getCellValue: row => row.stats.simulation_foul },
+      { name: 'time_lost_foul', title: 'TF', getCellValue: row => row.stats.time_lost_foul },
+      { name: 'penalty_foul', title: 'PE', getCellValue: row => row.stats.penalty_foul },
+      { name: 'tackle', title: 'T', getCellValue: row => row.stats.tackle },
+      { name: 'opponent_half_recovery', title: 'OR', getCellValue: row => row.stats.opponent_half_recovery },
+      { name: 'pressing_duel', title: 'PD', getCellValue: row => row.stats.pressing_duel },
+      { name: 'aerial_duel', title: 'AD', getCellValue: row => row.stats.aerial_duel },
+      { name: 'foul_suffered', title: 'FS', getCellValue: row => row.stats.foul_suffered },
+    ]
+    return statSelector === 'SUMMARY' ? summary : disciplinary
+  }, [statSelector])
   const [integratedSortingColumnExtensions] = useState([
     { columnName: 'roleAShort', compare: compareByRole },
     { columnName: 'title', compare: compareByName },
@@ -152,6 +194,12 @@ const Team = () => {
     { columnName: 'shot_from_outside_area', compare: compareWithNull },
     { columnName: 'foul_suffered', compare: compareWithNull },
     { columnName: 'pass_to_final_third_success', compare: compareWithNull },
+    { columnName: 'corner', compare: compareWithNull },
+    { columnName: 'aerial_duel', compare: compareWithNull },
+    { columnName: 'time_lost_foul', compare: compareWithNull },
+    { columnName: 'simulation_foul', compare: compareWithNull },
+    { columnName: 'out_of_play_foul', compare: compareWithNull },
+    { columnName: 'violent_foul', compare: compareWithNull },
   ])
   const [sortingStateColumnExtensions] = useState([
     { columnName: 'photoUrl', sortingEnabled: false },
@@ -239,8 +287,7 @@ const Team = () => {
                                   {...otherProps} value={null}/>
       }
       return (
-        <VirtualTable.Cell style={combinedStyle}
-                           {...otherProps} >
+        <VirtualTable.Cell style={combinedStyle}{...otherProps} >
           <Tooltip
             onClose={() => setOpenTooltipImage('')}
             open={openTooltipImage === `Avatar_${row.id}`}
@@ -286,7 +333,8 @@ const Team = () => {
     const cellStyle = {
       padding: theme.spacing(1),
       border: 0,
-      backgroundColor: '#191919'
+      backgroundColor: '#191919',
+      fontSize: 12,
     }
     const combinedStyle = { ...style, ...cellStyle }
     if (column.name === 'photoUrl') {
@@ -300,9 +348,31 @@ const Team = () => {
     }
     if (['yellow_cards', 'red_cards'].includes(column.name)) {
       return (
-        <VirtualTable.Cell {...props}
-                           style={{ ...cellStyle, color: column.name === 'yellow_cards' ? 'yellow' : 'red' }}>
+        <VirtualTable.Cell
+          {...props}
+          style={{ ...cellStyle, color: column.name === 'yellow_cards' ? 'yellow' : 'red' }}
+        >
           {props.children}
+        </VirtualTable.Cell>
+      )
+    }
+    if (column.name === 'roleAShort') {
+      return (
+        <VirtualTable.Cell
+          {...props}
+          style={cellStyle}
+        >
+          <Box display="flex">
+            <span
+              style={{ fontSize: 'small', cursor: 'pointer', marginRight: 2 }}
+              onClick={() => {
+                setStatSelector(statSelector === 'SUMMARY' ? 'DIS' : 'SUMMARY')
+              }}
+            >
+              📄
+            </span>
+            <Box>{props.children}</Box>
+          </Box>
         </VirtualTable.Cell>
       )
     }
@@ -311,9 +381,14 @@ const Team = () => {
         style={combinedStyle}
         {...otherProps}
       >
-        <Tooltip title={column.name} placement="top-start" arrow>
-          {props.children}
-        </Tooltip>
+        {
+          ['title', 'roleAShort', 'shirtNumber'].includes(column.name) ?
+            props.children
+            :
+            <Tooltip title={column.name} placement="top-start" arrow>
+              {props.children}
+            </Tooltip>
+        }
       </VirtualTable.Cell>
     )
   }))
