@@ -249,10 +249,32 @@ const Home = () => {
                       },
                       flexGrow: 0,
                       minWidth: '50px',
-                      textAlign: 'center'
+                      textAlign: 'center',
+                      fontSize: 15,
                     }}
                   >
-                    <Typography>{match?.separator.replace('<span>(Rinviata)</span>', 'rinv.')}</Typography>
+                    {match['matchStats']?.xgAway ? (
+                        <Tooltip
+                          placement="top"
+                          title={
+                            <div>
+                              <span
+                                style={{ color: 'orange' }}>{`${match['matchStats']?.possessionHome?.toFixed(2)}%`}</span>
+                              &nbsp;&nbsp;
+                              <span style={{ color: 'cyan' }}>{`${match['matchStats']?.xgAway}`}</span> /&nbsp;
+                              <span style={{ color: 'cyan' }}>{`${match['matchStats']?.xgHome}`}</span>
+                              &nbsp;&nbsp;
+                              <span
+                                style={{ color: 'orange' }}>{`${match['matchStats']?.possessionAway?.toFixed(2)}%`}</span>
+                            </div>
+                          }
+                          enterDelay={1000}
+                        >
+                          {match?.separator.replace('<span>(Rinviata)</span>', 'rinv.')}
+                        </Tooltip>
+                      ) :
+                      match?.separator.replace('<span>(Rinviata)</span>', 'rinv.')
+                    }
                   </Link>
                   <Typography
                     color="inherit"
@@ -326,7 +348,8 @@ const Home = () => {
                       {roundNameCode[match['teamAName']]?.split(' - ')?.[1]}
                     </span>
                   </Typography>
-                </Box>)
+                </Box>
+              )
             })}
         </Box>
         <Box pr={2} textAlign="right" pt={0.5}>
