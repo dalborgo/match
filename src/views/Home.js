@@ -261,8 +261,8 @@ const Home = () => {
                               <span
                                 style={{ color: 'orange' }}>{`${match['matchStats']?.possessionHome?.toFixed(2)}%`}</span>
                               &nbsp;&nbsp;
-                              <span style={{ color: 'cyan' }}>{`${match['matchStats']?.xgAway}`}</span> /&nbsp;
-                              <span style={{ color: 'cyan' }}>{`${match['matchStats']?.xgHome}`}</span>
+                              <span style={{ color: 'cyan' }}>{`${match['matchStats']?.xgHome}`}</span> /&nbsp;
+                              <span style={{ color: 'cyan' }}>{`${match['matchStats']?.xgAway}`}</span>
                               &nbsp;&nbsp;
                               <span
                                 style={{ color: 'orange' }}>{`${match['matchStats']?.possessionAway?.toFixed(2)}%`}</span>
