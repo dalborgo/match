@@ -272,7 +272,8 @@ const Home = () => {
                         >
                           {match?.separator.replace('<span>(Rinviata)</span>', 'rinv.')}
                         </Tooltip>
-                      ) :
+                      )
+                      :
                       match?.separator.replace('<span>(Rinviata)</span>', 'rinv.')
                     }
                   </Link>
@@ -295,7 +296,7 @@ const Home = () => {
                     {match['teamBName']}
                   </Typography>
                   <Typography sx={{ flexBasis: '200px', flexGrow: 1, textAlign: 'left', maxWidth: '350px' }}>
-                    {match['referee']}{match['referee'] ? ` (${getSection(match['referee'])})` : ''}
+                    {match['referee']}{match['referee'] ? getSection(match['referee']) ? ` (${getSection(match['referee'])})` : '' : ''}
                   </Typography>
                   <Typography sx={{ flexBasis: '60px', textAlign: 'center', maxWidth: '80px' }}>
                     <Tooltip placement="left"
