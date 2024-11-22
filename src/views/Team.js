@@ -54,6 +54,7 @@ const tableColumnExtensions = [
   { columnName: 'title', width: 170 },
   { columnName: 'market_value', width: 70, align: 'right' },
   { columnName: 'age', width: 50 },
+  { columnName: 'foot', width: 49 },
   { columnName: 'height', width: 50 },
   { columnName: 'minutes_on_field', width: 52 },
   { columnName: 'appearances', width: 56 },
@@ -118,6 +119,11 @@ const Team = () => {
       { name: 'photoUrl', title: ' ' },
       { name: 'title', title: 'Nome' },
       { name: 'age', title: 'Y', getCellValue: row => row.summary.age },
+      {
+        name: 'foot',
+        title: 'F',
+        getCellValue: row => row.summary.foot === 'right' ? '❯' : row.summary.foot === 'left' ? '❮' : ''
+      },
       { name: 'height', title: 'H', getCellValue: row => row.summary.height || '' },
       { name: 'market_value', title: '€', getCellValue: row => row.summary.market_value },
       { name: 'minutes_on_field', title: 'M', getCellValue: row => row.stats.minutes_on_field },
@@ -150,6 +156,11 @@ const Team = () => {
       { name: 'photoUrl', title: ' ' },
       { name: 'title', title: 'Nome' },
       { name: 'age', title: 'Y', getCellValue: row => row.summary.age },
+      {
+        name: 'foot',
+        title: 'F',
+        getCellValue: row => row.summary.foot === 'right' ? '❯' : row.summary.foot === 'left' ? '❮' : ''
+      },
       { name: 'height', title: 'H', getCellValue: row => row.summary.height || '' },
       { name: 'market_value', title: '€', getCellValue: row => row.summary.market_value },
       { name: 'minutes_on_field', title: 'M', getCellValue: row => row.stats.minutes_on_field },
@@ -228,6 +239,16 @@ const Team = () => {
       height: 42,
     }
     const combinedStyle = { ...style, ...cellStyle }
+    if (column.name === 'foot') {
+      return (
+        <VirtualTable.Cell {...props} value={null} style={{
+          ...cellStyle,
+          color: value === '❯' ? '#86ff97' : '#ff6666',
+        }}>
+          {value}
+        </VirtualTable.Cell>
+      )
+    }
     if (column.name === 'title') {
       const career = row?.career || {}
       return (
