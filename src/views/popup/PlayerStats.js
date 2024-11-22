@@ -78,25 +78,23 @@ const PlayerStats = ({ teamId }) => {
         <Box position="relative" sx={{ top: 40 }}>
           <div dangerouslySetInnerHTML={{ __html: position.results }}/>
         </Box>
-        <Box position="relative" sx={{ left: 170 }}>
-          <Box mb={1} display="flex">
+        <IconButton
+          size="small"
+          onClick={() => {
+            navigate(`/team/${teamId}`, { state: { teamName: player['teamName'] } })
+          }}
+          style={{ marginTop: -10 }}
+        >
+          <CloseIcon/>
+        </IconButton>
+        <Box position="relative" sx={{ left: 170 }} mt={-4}>
+          <Box mb={1}>
             <Typography color={'secondary'} variant="h6" display="inline">
               {player.shirtNumber ? `#${player.shirtNumber} ` : ''}
-            </Typography>&nbsp;
+            </Typography>
             <Typography color={'primary'} variant="h6" display="inline">
               {player.title}
             </Typography>
-            <Box width={230}/>
-            <Box mt={-1}>
-              <IconButton
-                size="small"
-                onClick={() => {
-                  navigate(`/team/${teamId}`, { state: { teamName: player['teamName'] } })
-                }}
-              >
-                <CloseIcon/>
-              </IconButton>
-            </Box>
           </Box>
           {
             positions.map((pos, index) => {
