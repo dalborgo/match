@@ -1,7 +1,8 @@
 import React from 'react'
-import { Box, Modal, TableCell, TableRow, Tooltip, Typography } from '@mui/material'
+import { Box, IconButton, Modal, TableCell, TableRow, Tooltip, Typography } from '@mui/material'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
+import CloseIcon from '@mui/icons-material/Close'
 import './wyscout.css'
 
 const style = {
@@ -78,13 +79,24 @@ const PlayerStats = ({ teamId }) => {
           <div dangerouslySetInnerHTML={{ __html: position.results }}/>
         </Box>
         <Box position="relative" sx={{ left: 170 }}>
-          <Box mb={1}>
+          <Box mb={1} display="flex">
             <Typography color={'secondary'} variant="h6" display="inline">
               {player.shirtNumber ? `#${player.shirtNumber} ` : ''}
-            </Typography>
+            </Typography>&nbsp;
             <Typography color={'primary'} variant="h6" display="inline">
               {player.title}
             </Typography>
+            <Box width={230}/>
+            <Box mt={-1}>
+              <IconButton
+                size="small"
+                onClick={() => {
+                  navigate(`/team/${teamId}`, { state: { teamName: player['teamName'] } })
+                }}
+              >
+                <CloseIcon/>
+              </IconButton>
+            </Box>
           </Box>
           {
             positions.map((pos, index) => {
