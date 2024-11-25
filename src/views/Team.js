@@ -119,11 +119,7 @@ const Team = () => {
       { name: 'photoUrl', title: ' ' },
       { name: 'title', title: 'Nome' },
       { name: 'age', title: 'Y', getCellValue: row => row.summary.age },
-      {
-        name: 'foot',
-        title: 'F',
-        getCellValue: row => row.summary.foot === 'right' ? '❯' : row.summary.foot === 'left' ? '❮' : ''
-      },
+      { name: 'foot', title: 'F' },
       { name: 'height', title: 'H', getCellValue: row => row.summary.height || '' },
       { name: 'market_value', title: '€', getCellValue: row => row.summary.market_value },
       { name: 'minutes_on_field', title: 'M', getCellValue: row => row.stats.minutes_on_field },
@@ -156,11 +152,7 @@ const Team = () => {
       { name: 'photoUrl', title: ' ' },
       { name: 'title', title: 'Nome' },
       { name: 'age', title: 'Y', getCellValue: row => row.summary.age },
-      {
-        name: 'foot',
-        title: 'F',
-        getCellValue: row => row.summary.foot === 'right' ? '❯' : row.summary.foot === 'left' ? '❮' : ''
-      },
+      { name: 'foot', title: 'F' },
       { name: 'height', title: 'H', getCellValue: row => row.summary.height || '' },
       { name: 'market_value', title: '€', getCellValue: row => row.summary.market_value },
       { name: 'minutes_on_field', title: 'M', getCellValue: row => row.stats.minutes_on_field },
@@ -244,9 +236,9 @@ const Team = () => {
       return (
         <VirtualTable.Cell {...props} value={null} style={{
           ...cellStyle,
-          color: value === '❯' ? '#86ff97' : '#ff6666',
         }}>
-          {value}
+          {row.summary.foot && row.summary.foot !== 'unknown' ? <img src={`/icons8_${row.summary.foot}_foot.svg`}
+                                                                     width={16} alt="foot"/> : null}
         </VirtualTable.Cell>
       )
     }
@@ -405,7 +397,7 @@ const Team = () => {
             props.children
             :
             <Tooltip title={column.name} placement="top-start" arrow>
-              {props.children}
+              <span>{props.children}</span>
             </Tooltip>
         }
       </VirtualTable.Cell>
