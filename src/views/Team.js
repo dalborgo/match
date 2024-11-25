@@ -119,7 +119,7 @@ const Team = () => {
       { name: 'photoUrl', title: ' ' },
       { name: 'title', title: 'Nome' },
       { name: 'age', title: 'Y', getCellValue: row => row.summary.age },
-      { name: 'foot', title: 'F' },
+      { name: 'foot', title: 'F', getCellValue: row => row.summary.foot },
       { name: 'height', title: 'H', getCellValue: row => row.summary.height || '' },
       { name: 'market_value', title: '€', getCellValue: row => row.summary.market_value },
       { name: 'minutes_on_field', title: 'M', getCellValue: row => row.stats.minutes_on_field },
@@ -152,7 +152,7 @@ const Team = () => {
       { name: 'photoUrl', title: ' ' },
       { name: 'title', title: 'Nome' },
       { name: 'age', title: 'Y', getCellValue: row => row.summary.age },
-      { name: 'foot', title: 'F' },
+      { name: 'foot', title: 'F', getCellValue: row => row.summary.foot },
       { name: 'height', title: 'H', getCellValue: row => row.summary.height || '' },
       { name: 'market_value', title: '€', getCellValue: row => row.summary.market_value },
       { name: 'minutes_on_field', title: 'M', getCellValue: row => row.stats.minutes_on_field },
@@ -237,8 +237,18 @@ const Team = () => {
         <VirtualTable.Cell {...props} value={null} style={{
           ...cellStyle,
         }}>
-          {row.summary.foot && row.summary.foot !== 'unknown' ? <img src={`/icons8_${row.summary.foot}_foot.svg`}
-                                                                     width={16} alt="foot"/> : null}
+          {
+            value && value !== 'unknown' ?
+              value === 'both' ?
+                <>
+                  <img src="/icons8_left_foot.svg" width={16} alt="foot"/>
+                  <img src="/icons8_right_foot.svg" width={16} alt="foot" style={{ marginLeft: -5 }}/>
+                </>
+                :
+                <img src={`/icons8_${value}_foot.svg`} width={16} alt="foot"/>
+              :
+              null
+          }
         </VirtualTable.Cell>
       )
     }
