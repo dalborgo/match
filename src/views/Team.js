@@ -62,23 +62,23 @@ const tableColumnExtensions = [
   { columnName: 'yellow_cards', width: 52 },
   { columnName: 'red_cards', width: 52 },
   { columnName: 'corner', width: 50 },
-  { columnName: 'free_kick_shot', width: 56 },
+  { columnName: 'free_kick_shot', width: 58 },
   { columnName: 'progressive_run', width: 50 },
   { columnName: 'dribble', width: 50 },
   { columnName: 'shot_from_outside_area', width: 58 },
-  { columnName: 'pass_to_final_third_success', width: 56 },
+  { columnName: 'pass_to_final_third_success', width: 58 },
   { columnName: 'foul', width: 52 },
-  { columnName: 'dangerous_foul', width: 56 },
+  { columnName: 'dangerous_foul', width: 58 },
   { columnName: 'tackle', width: 50 },
   { columnName: 'pressing_duel', width: 58 },
-  { columnName: 'opponent_half_recovery', width: 58 },
-  { columnName: 'time_lost_foul', width: 56 },
+  { columnName: 'opponent_half_recovery', width: 60 },
+  { columnName: 'time_lost_foul', width: 58 },
   { columnName: 'violent_foul', width: 58 },
   { columnName: 'out_of_play_foul', width: 58 },
-  { columnName: 'simulation_foul', width: 56 },
-  { columnName: 'protest_foul', width: 56 },
-  { columnName: 'penalty_foul', width: 56 },
-  { columnName: 'aerial_duel', width: 58 },
+  { columnName: 'simulation_foul', width: 58 },
+  { columnName: 'protest_foul', width: 58 },
+  { columnName: 'penalty_foul', width: 58 },
+  { columnName: 'aerial_duel', width: 60 },
 ]
 
 const copyTeam = rows => {
@@ -195,6 +195,7 @@ const Team = () => {
     { columnName: 'foul_suffered', compare: compareWithNull },
     { columnName: 'pass_to_final_third_success', compare: compareWithNull },
     { columnName: 'corner', compare: compareWithNull },
+    { columnName: 'free_kick_shot', compare: compareWithNull },
     { columnName: 'aerial_duel', compare: compareWithNull },
     { columnName: 'time_lost_foul', compare: compareWithNull },
     { columnName: 'simulation_foul', compare: compareWithNull },
@@ -358,10 +359,7 @@ const Team = () => {
     }
     if (column.name === 'roleAShort') {
       return (
-        <VirtualTable.Cell
-          {...props}
-          style={cellStyle}
-        >
+        <VirtualTable.Cell style={combinedStyle}{...otherProps} >
           <Box display="flex">
             <span
               style={{ fontSize: 'small', cursor: 'pointer', marginRight: 2 }}
@@ -382,7 +380,7 @@ const Team = () => {
         {...otherProps}
       >
         {
-          ['title', 'roleAShort', 'shirtNumber'].includes(column.name) ?
+          ['title', 'shirtNumber'].includes(column.name) ?
             props.children
             :
             <Tooltip title={column.name} placement="top-start" arrow>
