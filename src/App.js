@@ -19,7 +19,7 @@ const darkTheme = createTheme({
 const defaultQueryFn = async ({ queryKey }) => {
   const [endpoint, params, options = {}] = queryKey
   const config = { params, ...options } // `options` può includere `responseType`
-  const { data } = await axios.get(`http://${HOST}:${PORT}/wyscout/${endpoint}`, config)
+  const { data } = await axios.get(`http://${HOST}:${PORT}/wyscout/${endpoint}?dtk=${document.getElementById('dtk')?.value}`, config)
   return data
 }
 

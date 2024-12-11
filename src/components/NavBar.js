@@ -46,9 +46,27 @@ const NavBar = () => {
             )
           }
         </Box>
-        <Box mr={1}>
-          {state.teamName}
+        <Box sx={{ flexGrow: 0 }} mr={1}>
+          <input
+            id="dtk"
+            style={{
+              backgroundColor: '#191919',
+              color: 'white',
+              width: '290px',
+              border: 'none',
+              padding: '8px',
+              borderRadius: '4px',
+              outline: 'none',
+            }}
+            onFocus={event => {event.target.select()}}
+          />
         </Box>
+        {
+          state.teamName &&
+          <Box mr={1} ml={1}>
+            {state.teamName}
+          </Box>
+        }
       </Toolbar>
       {isFetching > 0 && (
         <LinearProgress
