@@ -48,8 +48,10 @@ function DownloadPdfButton ({ matchId, teamAId, teamBId, teamAName, teamBName, s
     const [dataA, dataB] = await queryClient.fetchQuery({
       queryKey: [`video/${teamAId}${teamBId}/match/${matchId}`, { stat }],
       queryFn: async () => {
-        const responseA = await axios.get(`http://${HOST}:${PORT}/wyscout/video/${teamAId}/match/${matchId}?stat=${stat}`)
-        const responseB = await axios.get(`http://${HOST}:${PORT}/wyscout/video/${teamBId}/match/${matchId}?stat=${stat}`)
+        const dtk = document.getElementById('dtk')?.value
+        console.log('dtk:', dtk)
+        const responseA = await axios.get(`http://${HOST}:${PORT}/wyscout/video/${teamAId}/match/${matchId}?stat=${stat}&dtk=${dtk}`)
+        const responseB = await axios.get(`http://${HOST}:${PORT}/wyscout/video/${teamBId}/match/${matchId}?stat=${stat}&dtk=${dtk}`)
         return [responseA.data, responseB.data]
       },
       meta: { isManualFetching: true }
@@ -98,8 +100,9 @@ function DownloadPdfButtonList ({ list, stat, children, style = {} }) {
         const [dataA, dataB] = await queryClient.fetchQuery({
           queryKey: [`video/${teamAId}${teamBId}/match/${matchId}`, { stat }],
           queryFn: async () => {
-            const responseA = await axios.get(`http://${HOST}:${PORT}/wyscout/video/${teamAId}/match/${matchId}?stat=${stat}`)
-            const responseB = await axios.get(`http://${HOST}:${PORT}/wyscout/video/${teamBId}/match/${matchId}?stat=${stat}`)
+            const dtk = document.getElementById('dtk')?.value
+            const responseA = await axios.get(`http://${HOST}:${PORT}/wyscout/video/${teamAId}/match/${matchId}?stat=${stat}&dtk=${dtk}`)
+            const responseB = await axios.get(`http://${HOST}:${PORT}/wyscout/video/${teamBId}/match/${matchId}?stat=${stat}&dtk=${dtk}`)
             return [responseA.data, responseB.data]
           },
           meta: { isManualFetching: true }
