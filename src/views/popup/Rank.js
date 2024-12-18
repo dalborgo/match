@@ -33,6 +33,8 @@ const style = {
 
 const selectIcon = stat => {
   switch (stat) {
+    case 'fouls':
+      return (<span style={{ color: 'cyan' }}>P</span>)
     case 'yellow_card':
       return (<span style={{ color: 'yellow' }}>█</span>)
     case 'red_card':

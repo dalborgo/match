@@ -349,10 +349,20 @@ const Home = () => {
                     </DownloadPdfButton>
                   </Typography>
                   <Typography sx={{ flexBasis: '60px', textAlign: 'center', maxWidth: '80px' }}>
-                    <Tooltip placement="left"
-                             title={`${match['matchStats']?.penaltyHome} / ${match['matchStats']?.penaltyAway}`}>
-                      <span style={{ color: 'cyan', cursor: 'help' }}>{match['matchStats']?.penaltyTotal || ''}</span>
-                    </Tooltip>
+                    <DownloadPdfButton
+                      style={{ color: 'cyan' }}
+                      matchId={match['objId']}
+                      teamAName={match['teamAName']}
+                      teamBName={match['teamBName']}
+                      teamAId={teamIdCode[match['teamAName']]}
+                      teamBId={teamIdCode[match['teamBName']]}
+                      stat="fouls"
+                    >
+                      <Tooltip placement="left"
+                               title={`${match['matchStats']?.penaltyHome} / ${match['matchStats']?.penaltyAway}`}>
+                        <span style={{ color: 'cyan', cursor: 'help' }}>{match['matchStats']?.penaltyTotal || ''}</span>
+                      </Tooltip>
+                    </DownloadPdfButton>
                   </Typography>
                   <Typography sx={{ flexBasis: '250px', textAlign: 'right', fontStyle: 'italic', color: '#4caf50' }}>
                     {manageDate(match.data)}{' '}
