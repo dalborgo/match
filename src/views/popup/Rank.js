@@ -194,7 +194,7 @@ const Ranking = ({ rank, teamA, teamB }) => {
           </TableRow>
         </TableHead>
         <TableBody>
-          {rank.items.map((team) => (
+          {rank?.items.map((team) => (
             <TableRow
               key={team.teamId}
               sx={{

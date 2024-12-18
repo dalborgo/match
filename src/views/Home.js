@@ -49,7 +49,6 @@ function DownloadPdfButton ({ matchId, teamAId, teamBId, teamAName, teamBName, s
       queryKey: [`video/${teamAId}${teamBId}/match/${matchId}`, { stat }],
       queryFn: async () => {
         const dtk = document.getElementById('dtk')?.value
-        console.log('dtk:', dtk)
         const responseA = await axios.get(`http://${HOST}:${PORT}/wyscout/video/${teamAId}/match/${matchId}?stat=${stat}&dtk=${dtk}`)
         const responseB = await axios.get(`http://${HOST}:${PORT}/wyscout/video/${teamBId}/match/${matchId}?stat=${stat}&dtk=${dtk}`)
         return [responseA.data, responseB.data]
@@ -170,7 +169,7 @@ const Home = () => {
   const next_ = general.find(item => item?.params?.params?.transition === 'next')
   const prev = prev_ ? prev_.params.params['period'].split('_')[1] : null
   const next = next_ ? next_.params.params['period'].split('_')[1] : null
-  const totalRedCards = []
+  const totalRedCards = [], totalPenalties = []
   return (
     <>
       <Box
@@ -194,6 +193,15 @@ const Home = () => {
             list.map((match, index) => {
               if (match['matchStats']?.redTotal) {
                 totalRedCards.push({
+                  teamAName: match['teamAName'],
+                  teamBName: match['teamBName'],
+                  teamAId: teamIdCode[match['teamAName']],
+                  teamBId: teamIdCode[match['teamBName']],
+                  matchId: match['objId'],
+                })
+              }
+              if (match['matchStats']?.penaltyTotal) {
+                totalPenalties.push({
                   teamAName: match['teamAName'],
                   teamBName: match['teamBName'],
                   teamAId: teamIdCode[match['teamAName']],
@@ -356,7 +364,10 @@ const Home = () => {
               )
             })}
         </Box>
-        <Box pr={2} textAlign="right" pt={0.5}>
+  
+        <Box pr={2} pt={0.5} textAlign="right">
+          <DownloadPdfButtonList list={totalPenalties} stat="fouls"><span
+            style={{ color: 'cyan', fontSize: 'small' }}>P</span></DownloadPdfButtonList>&nbsp;&nbsp;&nbsp;
           <DownloadPdfButtonList list={totalRedCards} stat="red_cards"><span
             style={{ color: 'red', fontSize: 'small' }}>█</span></DownloadPdfButtonList>
         </Box>
