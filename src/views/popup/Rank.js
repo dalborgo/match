@@ -31,10 +31,15 @@ const style = {
   padding: 2,
 }
 
-const selectIcon = stat => {
+const selectIcon = (stat, stat2) => {
   switch (stat) {
-    case 'fouls':
-      return (<span style={{ color: 'cyan' }}>P</span>)
+    case 'fouls': {
+      if (stat2 === 'dangerous_fouls') {
+        return (<span style={{ color: 'orange' }}>D</span>)
+      } else {
+        return (<span style={{ color: 'cyan' }}>P</span>)
+      }
+    }
     case 'yellow_card':
       return (<span style={{ color: 'yellow' }}>█</span>)
     case 'red_card':
@@ -94,7 +99,7 @@ const VideoList = ({ videos, teamName, hasResult }) => (
               },
             }}
           >
-            {selectIcon(video.stat)}{video.player ? ` ${video.player}` : ''}{video.time ? ` (${video.time}${!hasResult && video.date ? ` - ${video.date}` : ''})` : ''}
+            {selectIcon(video.stat, video.stat2)}{video.player ? ` ${video.player}` : ''}{video.time ? ` (${video.time}${!hasResult && video.date ? ` - ${video.date}` : ''})` : ''}
           </Link>
         </Box>
       ))
