@@ -86,7 +86,7 @@ function DownloadPdfButton ({ matchId, teamAId, teamBId, teamAName, teamBName, s
   )
 }
 
-function DownloadPdfButtonList ({ list, stat, children, style = {} }) {
+function DownloadPdfButtonList ({ list, stat, stat2 = 'penalty_fouls', children, style = {} }) {
   const queryClient = useQueryClient()
   
   const downloadPdf = async () => {
@@ -100,8 +100,8 @@ function DownloadPdfButtonList ({ list, stat, children, style = {} }) {
           queryKey: [`video/${teamAId}${teamBId}/match/${matchId}`, { stat }],
           queryFn: async () => {
             const dtk = document.getElementById('dtk')?.value
-            const responseA = await axios.get(`http://${HOST}:${PORT}/wyscout/video/${teamAId}/match/${matchId}?stat=${stat}&dtk=${dtk}`)
-            const responseB = await axios.get(`http://${HOST}:${PORT}/wyscout/video/${teamBId}/match/${matchId}?stat=${stat}&dtk=${dtk}`)
+            const responseA = await axios.get(`http://${HOST}:${PORT}/wyscout/video/${teamAId}/match/${matchId}?stat=${stat}&stat2=${stat2}&dtk=${dtk}`)
+            const responseB = await axios.get(`http://${HOST}:${PORT}/wyscout/video/${teamBId}/match/${matchId}?stat=${stat}&stat2=${stat2}&dtk=${dtk}`)
             return [responseA.data, responseB.data]
           },
           meta: { isManualFetching: true }
@@ -133,7 +133,8 @@ function DownloadPdfButtonList ({ list, stat, children, style = {} }) {
         cursor: 'pointer',
         textDecoration: 'none',
         '&:hover': {
-          textDecoration: 'underline'
+          textDecoration: 'underline',
+          textDecorationColor: style.color
         }
       }}>
       {children}
@@ -169,7 +170,7 @@ const Home = () => {
   const next_ = general.find(item => item?.params?.params?.transition === 'next')
   const prev = prev_ ? prev_.params.params['period'].split('_')[1] : null
   const next = next_ ? next_.params.params['period'].split('_')[1] : null
-  const totalRedCards = [], totalPenalties = []
+  const totalRedCards = [], totalPenalties = [], totalYellowCards = []
   return (
     <>
       <Box
@@ -191,6 +192,15 @@ const Home = () => {
         <Box>
           {
             list.map((match, index) => {
+              if (match['matchStats']?.yellowTotal) {
+                totalYellowCards.push({
+                  teamAName: match['teamAName'],
+                  teamBName: match['teamBName'],
+                  teamAId: teamIdCode[match['teamAName']],
+                  teamBId: teamIdCode[match['teamBName']],
+                  matchId: match['objId'],
+                })
+              }
               if (match['matchStats']?.redTotal) {
                 totalRedCards.push({
                   teamAName: match['teamAName'],
@@ -374,8 +384,9 @@ const Home = () => {
               )
             })}
         </Box>
-  
         <Box pr={2} pt={0.5} textAlign="right">
+          <DownloadPdfButtonList list={totalYellowCards} stat="yellow_card" stat2="protest_fouls"><span
+            style={{ color: 'yellow', fontSize: 'small' }}>P</span></DownloadPdfButtonList>&nbsp;&nbsp;&nbsp;
           <DownloadPdfButtonList list={totalPenalties} stat="fouls"><span
             style={{ color: 'cyan', fontSize: 'small' }}>P</span></DownloadPdfButtonList>&nbsp;&nbsp;&nbsp;
           <DownloadPdfButtonList list={totalRedCards} stat="red_cards"><span
