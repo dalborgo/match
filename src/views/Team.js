@@ -8,6 +8,11 @@ import { CopyToClipboard } from 'react-copy-to-clipboard'
 import { useTheme, withStyles } from '@mui/styles'
 import PlayerStats from './popup/PlayerStats'
 import { getArea } from './helpers'
+import axios from 'axios'
+import { envConfig } from '../init'
+
+const PORT = envConfig['BACKEND_PORT']
+const HOST = envConfig['BACKEND_HOST']
 
 const shouldDisplayAvatar = photoUrl => {
   return photoUrl && !photoUrl.includes('ndplayer')
@@ -89,6 +94,50 @@ const copyTeam = rows => {
     toCopy += `${row.shirtNumber ? row.shirtNumber + '\n' : ''}${getLastName(row.title)}\n${ROLES[row.roleAShort] || 'Allenatore'}\n\n`
   }
   return toCopy
+}
+
+function SpecialDownload ({ playerId, children, style = {} }) {
+  const queryClient = useQueryClient()
+  
+  const downloadPdf = async () => {
+    let allVideosList = []
+    try {
+      const [dataA] = await queryClient.fetchQuery({
+        queryKey: [`best/${playerId}`],
+        queryFn: async () => {
+          const dtk = document.getElementById('dtk')?.value
+          const responseA = await axios.get(`http://${HOST}:${PORT}/wyscout/best/${playerId}?dtk=${dtk}`)
+          return [responseA.data]
+        },
+        meta: { isManualFetching: true }
+      })
+      allVideosList = dataA?.results ?? []
+    } catch (error) {
+      console.error(`Errore durante il fetch dei dati per il player ${playerId}:`, error)
+    }
+    const toSave = allVideosList.join('\n')
+    const blob = new Blob([toSave], { type: 'text/plain' })
+    const link = document.createElement('a')
+    link.href = URL.createObjectURL(blob)
+    link.download = `best_${playerId}_videos_list.zpl`
+    link.click()
+    URL.revokeObjectURL(link.href)
+  }
+  
+  return (
+    <Link
+      onClick={downloadPdf}
+      sx={{
+        ...style,
+        cursor: 'pointer',
+        textDecoration: 'none',
+        '&:hover': {
+          textDecoration: 'underline'
+        }
+      }}>
+      {children}
+    </Link>
+  )
 }
 
 const Root = props => <Grid.Root {...props} style={{ height: '100%' }}/>
@@ -279,6 +328,18 @@ const Team = () => {
             <span style={{ color: career?.['Serie A']?.['appearances'] ? 'gold' : undefined }}>{value}</span>
           </Link>&nbsp;
           <span style={{ color: '#b3b3b3' }}>{row.subtitle}</span>
+        </VirtualTable.Cell>
+      )
+    }
+    if (column.name === 'shirtNumber') {
+      return (
+        <VirtualTable.Cell
+          style={combinedStyle}
+          {...otherProps}
+        >
+          <SpecialDownload playerId={row.id} style={{ color: 'white' }}>
+            {value}
+          </SpecialDownload>
         </VirtualTable.Cell>
       )
     }
