@@ -385,6 +385,8 @@ const Home = () => {
             })}
         </Box>
         <Box pr={2} pt={0.5} textAlign="right">
+          <DownloadPdfButtonList list={totalYellowCards} stat="offsides"><span
+            style={{ color: 'cyan', fontSize: 'small' }}>O</span></DownloadPdfButtonList>&nbsp;&nbsp;&nbsp;
           <DownloadPdfButtonList list={totalYellowCards} stat="yellow_card" stat2="protest_fouls"><span
             style={{ color: 'yellow', fontSize: 'small' }}>P</span></DownloadPdfButtonList>&nbsp;&nbsp;&nbsp;
           <DownloadPdfButtonList list={totalPenalties} stat="fouls"><span
