@@ -10,7 +10,7 @@ const style = {
   top: '50%',
   left: '50%',
   width: 600,
-  height: 350,
+  height: 400,
   transform: 'translate(-50%, -50%)',
   bgcolor: 'background.paper',
   border: '2px solid #000',
@@ -76,7 +76,7 @@ const PlayerStats = ({ teamId }) => {
     >
       <Box sx={style}>
         <Box position="relative" sx={{ top: 40 }}>
-          <div dangerouslySetInnerHTML={{ __html: position.results }}/>
+          <div dangerouslySetInnerHTML={{ __html: position.results.html }}/>
         </Box>
         <IconButton
           size="small"
@@ -121,6 +121,29 @@ const PlayerStats = ({ teamId }) => {
                   </Box>
                   <Box flex={1} textAlign="right">{stats.appearances}</Box>
                   <Box flex={1} textAlign="right">{stats.goal}</Box>
+                </Box>
+              ))
+            ) : (
+              <TableRow>
+                <TableCell colSpan={3} align="center">
+                  Nessun dato disponibile
+                </TableCell>
+              </TableRow>
+            )
+          }
+        </Box>
+        <Box position="relative" sx={{ left: 170 }} mt={2}>
+          {
+            position.results.lastMatches.length > 0 ? (
+              position.results.lastMatches.map(({ realdate, role, min, teamsNames }, index) => (
+                <Box key={index} display="flex" width={315}>
+                  <Box flex={1} sx={{ cursor: 'help' }}>
+                    <Tooltip title={teamsNames}>
+                      {realdate}
+                    </Tooltip>
+                  </Box>
+                  <Box flex={1} textAlign="right">{role}</Box>
+                  <Box flex={1} textAlign="right">{min}</Box>
                 </Box>
               ))
             ) : (
