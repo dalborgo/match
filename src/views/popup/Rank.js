@@ -36,6 +36,8 @@ const selectIcon = (stat, stat2) => {
     case 'fouls': {
       if (stat2 === 'dangerous_fouls') {
         return (<span style={{ color: 'orange' }}>D</span>)
+      } else if (stat2 === 'out_of_play_fouls') {
+        return (<span style={{ color: 'orange' }}>O</span>)
       } else {
         return (<span style={{ color: 'cyan' }}>P</span>)
       }
@@ -81,9 +83,19 @@ const TeamLogo = ({ team }) => {
   )
 }
 
-const VideoList = ({ videos, teamName, hasResult }) => (
+const VideoList = ({ videos, teamName, hasResult, schemas }) => (
   <Box width="400px">
     <Typography variant="h6">{teamName}</Typography>
+    {
+      schemas.length > 0 && (
+        schemas.slice(0, 4).map((scheme, index) => (
+          <Box key={index}>
+            <Typography variant="body2" display="inline">{scheme['module']}</Typography>&nbsp;&nbsp;
+            <Typography color="primary" display="inline" variant="body2">{scheme['percentage']}%</Typography>
+          </Box>
+        ))
+      )
+    }
     {videos.length > 0 ? (
       videos.map((video, index) => (
         <Box key={index}>
@@ -242,7 +254,7 @@ const Rank = ({ rank }) => {
   })
   if (isPending) {return null}
   const currentRank = rank?.find(rank => rank.roundName.includes(match.group))
-  const { videoA, videoB } = download.results
+  const { videoA, videoB, schemaA, schemaB } = download.results
   return (
     <Modal
       open={Boolean(true)}
@@ -273,8 +285,8 @@ const Rank = ({ rank }) => {
             <IconButton onClick={() => navigate('/')}><CloseIcon/></IconButton>
           </Box>
           <Box display="flex">
-            <VideoList videos={videoA} teamName={match.teamAName} hasResult={hasResult}/>
-            <VideoList videos={videoB} teamName={match.teamBName} hasResult={hasResult}/>
+            <VideoList videos={videoA} teamName={match.teamAName} hasResult={hasResult} schemas={schemaA}/>
+            <VideoList videos={videoB} teamName={match.teamBName} hasResult={hasResult} schemas={schemaB}/>
             <Ranking rank={currentRank} teamA={match.teamAName} teamB={match.teamBName}/>
           </Box>
         </Box>

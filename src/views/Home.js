@@ -170,7 +170,7 @@ const Home = () => {
   const next_ = general.find(item => item?.params?.params?.transition === 'next')
   const prev = prev_ ? prev_.params.params['period'].split('_')[1] : null
   const next = next_ ? next_.params.params['period'].split('_')[1] : null
-  const totalRedCards = [], totalPenalties = [], totalYellowCards = []
+  const totalRedCards = [], totalPenalties = [], totalYellowCards = [], totalGames = []
   return (
     <>
       <Box
@@ -219,6 +219,13 @@ const Home = () => {
                   matchId: match['objId'],
                 })
               }
+              totalGames.push({
+                teamAName: match['teamAName'],
+                teamBName: match['teamBName'],
+                teamAId: teamIdCode[match['teamAName']],
+                teamBId: teamIdCode[match['teamBName']],
+                matchId: match['objId'],
+              })
               return (
                 <Box
                   key={index}
@@ -385,12 +392,14 @@ const Home = () => {
             })}
         </Box>
         <Box pr={2} pt={0.5} textAlign="right">
-          <DownloadPdfButtonList list={totalYellowCards} stat="offsides"><span
+          <DownloadPdfButtonList list={totalGames} stat="offsides"><span
             style={{ color: 'cyan', fontSize: 'small' }}>O</span></DownloadPdfButtonList>&nbsp;&nbsp;&nbsp;
-          <DownloadPdfButtonList list={totalYellowCards} stat="yellow_card" stat2="protest_fouls"><span
-            style={{ color: 'yellow', fontSize: 'small' }}>P</span></DownloadPdfButtonList>&nbsp;&nbsp;&nbsp;
           <DownloadPdfButtonList list={totalPenalties} stat="fouls"><span
             style={{ color: 'cyan', fontSize: 'small' }}>P</span></DownloadPdfButtonList>&nbsp;&nbsp;&nbsp;
+          <DownloadPdfButtonList list={totalYellowCards} stat="yellow_card" stat2="out_of_play_fouls"><span
+            style={{ color: 'yellow', fontSize: 'small' }}>O</span></DownloadPdfButtonList>&nbsp;&nbsp;&nbsp;
+          <DownloadPdfButtonList list={totalYellowCards} stat="yellow_card" stat2="protest_fouls"><span
+            style={{ color: 'yellow', fontSize: 'small' }}>P</span></DownloadPdfButtonList>&nbsp;&nbsp;&nbsp;
           <DownloadPdfButtonList list={totalRedCards} stat="red_cards"><span
             style={{ color: 'red', fontSize: 'small' }}>█</span></DownloadPdfButtonList>
         </Box>
