@@ -12,7 +12,7 @@ import {
   TableRow,
   Typography
 } from '@mui/material'
-import { useLocation, useNavigate, useParams } from 'react-router-dom'
+import { Link as RouterLink, useLocation, useNavigate, useParams } from 'react-router-dom'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import DownloadIcon from '@mui/icons-material/Download'
 import CloseIcon from '@mui/icons-material/Close'
@@ -83,9 +83,23 @@ const TeamLogo = ({ team }) => {
   )
 }
 
-const VideoList = ({ videos, teamName, hasResult, schemas }) => (
+const VideoList = ({ videos, teamName, hasResult, schemas, teamId }) => (
   <Box width="400px">
-    <Typography variant="h6">{teamName}</Typography>
+    <Typography
+      color="inherit"
+      variant="h6"
+      component={RouterLink}
+      to={`/team/${teamId}`}
+      state={{ teamName: teamName }}
+      sx={{
+        textDecoration: 'none',
+        '&:hover': {
+          textDecoration: 'underline'
+        },
+      }}
+    >
+      {teamName}
+    </Typography>
     {
       schemas.length > 0 && (
         schemas.slice(0, 4).map((scheme, index) => (
@@ -285,8 +299,20 @@ const Rank = ({ rank }) => {
             <IconButton onClick={() => navigate('/')}><CloseIcon/></IconButton>
           </Box>
           <Box display="flex">
-            <VideoList videos={videoA} teamName={match.teamAName} hasResult={hasResult} schemas={schemaA}/>
-            <VideoList videos={videoB} teamName={match.teamBName} hasResult={hasResult} schemas={schemaB}/>
+            <VideoList
+              videos={videoA}
+              teamName={match.teamAName}
+              hasResult={hasResult}
+              schemas={schemaA}
+              teamId={match.teamAId}
+            />
+            <VideoList
+              videos={videoB}
+              teamName={match.teamBName}
+              hasResult={hasResult}
+              schemas={schemaB}
+              teamId={match.teamBId}
+            />
             <Ranking rank={currentRank} teamA={match.teamAName} teamB={match.teamBName}/>
           </Box>
         </Box>
