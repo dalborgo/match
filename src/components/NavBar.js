@@ -8,6 +8,8 @@ const NavBar = () => {
   const { pathname } = location
   const id = pathname.split('/')[2]
   const state = location.state || {}
+  const searchParams = new URLSearchParams(location.search)
+  const teamName = searchParams.get('teamName') || state.teamName || ''
   return (
     <AppBar position="fixed">
       <Toolbar variant="dense" disableGutters style={{ paddingLeft: 8, paddingRight: 8 }}>
@@ -26,7 +28,7 @@ const NavBar = () => {
                 color={location.pathname.includes('/team') ? 'secondary' : 'inherit'}
                 component={Link}
                 to={`/team/${id}`}
-                state={state}
+                state={{ ...state, teamName }}
               >
                 Team
               </Button>
@@ -39,7 +41,7 @@ const NavBar = () => {
                 color={location.pathname.includes('/game') ? 'secondary' : 'inherit'}
                 component={Link}
                 to={`/game/${id}`}
-                state={state}
+                state={{ ...state, teamName }}
               >
                 Game
               </Button>
@@ -52,7 +54,7 @@ const NavBar = () => {
             style={{
               backgroundColor: '#191919',
               color: 'white',
-              width: '290px',
+              width: '295px',
               border: 'none',
               padding: '8px',
               borderRadius: '4px',
@@ -62,9 +64,9 @@ const NavBar = () => {
           />
         </Box>
         {
-          state.teamName &&
+          teamName &&
           <Box mr={1} ml={1}>
-            {state.teamName}
+            {teamName}
           </Box>
         }
       </Toolbar>

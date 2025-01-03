@@ -38,7 +38,7 @@ const getColor = group => {
 }
 
 export const getVideoListName = (video, teamAName) => {
-  const name = `${video['date'] ? `${video['date']}_` : ''}${teamAName}_${video['stat']}${video['player'] ? `_${video['player']}_${video['time']}` : ''}`
+  const name = `${video['date'] ? `${video['date']}_` : ''}${teamAName}_${video['stat']}${video['player'] ? `_${video['player']}${video['time'] ? `_${video['time']}` : ''}` : ''}`
   return `nm=${video['link']}\ndr=20\nft=57\ntt=${name}\nbr!`
 }
 

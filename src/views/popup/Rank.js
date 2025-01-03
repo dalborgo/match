@@ -48,6 +48,8 @@ const selectIcon = (stat, stat2) => {
       return (<span style={{ color: 'red' }}>█</span>)
     case 'Corner_conceded':
       return 'Corner subito'
+    case 'Corner_Kick':
+      return 'Corner eseguito'
     default:
       return ''
   }
@@ -89,7 +91,7 @@ const VideoList = ({ videos, teamName, hasResult, schemas, teamId }) => (
       color="inherit"
       variant="h6"
       component={RouterLink}
-      to={`/team/${teamId}`}
+      to={`/team/${teamId}?teamName=${teamName}`}
       state={{ teamName: teamName }}
       sx={{
         textDecoration: 'none',

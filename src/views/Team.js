@@ -148,7 +148,8 @@ const Team = () => {
   const location = useLocation()
   const state = location.state || {}
   const [openTooltipImage, setOpenTooltipImage] = useState('')
-  
+  const searchParams = new URLSearchParams(location.search)
+  const teamName = searchParams.get('teamName') || state.teamName || ''
   const handleToggleTooltipImage = event => {
     const name = event.target.parentElement.getAttribute('id')
     setOpenTooltipImage(prev => prev === name ? '' : name)
@@ -314,7 +315,7 @@ const Team = () => {
           <Link
             onClick={
               () => {
-                navigate(`${pathname}/player/${row.id}`, { state: { ...row, teamName: state.teamName } })
+                navigate(`${pathname}/player/${row.id}`, { state: { ...row, teamName } })
               }
             }
             sx={{

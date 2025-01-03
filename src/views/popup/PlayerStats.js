@@ -56,13 +56,16 @@ const percentValues = [
 ]
 const allowedCompetitions = ['Serie A', 'Serie B', 'Serie C', 'Serie D']
 const PlayerStats = ({ teamId }) => {
-  const { state: player = {} } = useLocation()
+  const location = useLocation()
+  const { state: player = {} } = location
   const { playerId } = useParams()
   const navigate = useNavigate()
   const { isPending, data: position } = useQuery({
     queryKey: [`position/${playerId}`],
     staleTime: 5000,
   })
+  const searchParams = new URLSearchParams(location.search)
+  const teamName = searchParams.get('teamName') || player['teamName'] || ''
   if (isPending) {return null}
   const filteredData = Object.entries(player?.career || {})
     .filter(([key]) => allowedCompetitions.includes(key))
@@ -71,7 +74,7 @@ const PlayerStats = ({ teamId }) => {
   return (<Modal
       open={Boolean(true)}
       onClose={() => {
-        navigate(`/team/${teamId}`, { state: { teamName: player['teamName'] } })
+        navigate(`/team/${teamId}`, { state: { teamName } })
       }}
     >
       <Box sx={style}>
@@ -81,7 +84,7 @@ const PlayerStats = ({ teamId }) => {
         <IconButton
           size="small"
           onClick={() => {
-            navigate(`/team/${teamId}`, { state: { teamName: player['teamName'] } })
+            navigate(`/team/${teamId}`, { state: { teamName } })
           }}
           style={{ marginTop: -10 }}
         >
