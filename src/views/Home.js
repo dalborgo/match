@@ -91,31 +91,31 @@ function DownloadPdfButtonList ({ list, stat, stat2 = 'penalty_fouls', children,
   
   const downloadPdf = async () => {
     let allVideosList = []
-    
-    for (const match of list) {
-      const { teamAId, teamBId, matchId, teamAName, teamBName } = match
-      
-      try {
-        const [dataA, dataB] = await queryClient.fetchQuery({
+    try {
+      const promises = list.map((match) => {
+        const { teamAId, teamBId, matchId, teamAName, teamBName } = match
+        return queryClient.fetchQuery({
           queryKey: [`video/${teamAId}${teamBId}/match/${matchId}`, { stat }],
           queryFn: async () => {
             const dtk = document.getElementById('dtk')?.value
-            const responseA = await axios.get(`http://${HOST}:${PORT}/wyscout/video/${teamAId}/match/${matchId}?stat=${stat}&stat2=${stat2}&dtk=${dtk}`)
-            const responseB = await axios.get(`http://${HOST}:${PORT}/wyscout/video/${teamBId}/match/${matchId}?stat=${stat}&stat2=${stat2}&dtk=${dtk}`)
+            const [responseA, responseB] = await Promise.all([
+              axios.get(`http://${HOST}:${PORT}/wyscout/video/${teamAId}/match/${matchId}?stat=${stat}&stat2=${stat2}&dtk=${dtk}`),
+              axios.get(`http://${HOST}:${PORT}/wyscout/video/${teamBId}/match/${matchId}?stat=${stat}&stat2=${stat2}&dtk=${dtk}`)
+            ])
             return [responseA.data, responseB.data]
           },
           meta: { isManualFetching: true }
+        }).then(([dataA, dataB]) => {
+          const outputA = dataA.results.map((video) => getVideoListName(video, teamAName))
+          const outputB = dataB.results.map((video) => getVideoListName(video, teamBName))
+          return [...outputA, ...outputB]
         })
-        
-        const outputA = dataA.results.map(video => getVideoListName(video, teamAName))
-        const outputB = dataB.results.map(video => getVideoListName(video, teamBName))
-        
-        allVideosList = [...allVideosList, ...outputA, ...outputB]
-      } catch (error) {
-        console.error(`Errore durante il fetch dei dati per la partita ${matchId}:`, error)
-      }
+      })
+      const results = await Promise.all(promises)
+      allVideosList = results.flat()
+    } catch (error) {
+      console.error('Errore durante il fetch dei dati:', error)
     }
-    
     const toSave = allVideosList.join('\n')
     const blob = new Blob([toSave], { type: 'text/plain' })
     const link = document.createElement('a')
