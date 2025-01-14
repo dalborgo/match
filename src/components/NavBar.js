@@ -54,7 +54,7 @@ const NavBar = () => {
             style={{
               backgroundColor: '#191919',
               color: 'white',
-              width: '295px',
+              width: '300px',
               border: 'none',
               padding: '8px',
               borderRadius: '4px',
