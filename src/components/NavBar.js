@@ -22,6 +22,18 @@ const NavBar = () => {
             Home
           </Button>
           {
+            (location.pathname === '/' || location.pathname === '/transfer') &&
+            (
+              <Button
+                color={location.pathname === '/transfer' ? 'secondary' : 'inherit'}
+                component={Link}
+                to="/transfer"
+              >
+                Transfer
+              </Button>
+            )
+          }
+          {
             (location.pathname.includes('/team') || location.pathname.includes('/game')) &&
             (
               <Button

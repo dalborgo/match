@@ -4,6 +4,7 @@ import NavBar from './components/NavBar'
 import Home from './views/Home'
 import Game from './views/Game'
 import Team from './views/Team'
+import Transfer from './views/Transfer'
 import { envConfig } from './init'
 import axios from 'axios'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
@@ -42,6 +43,7 @@ function App () {
           <Box sx={{ padding: 0, paddingTop: 0 }}>
             <Routes>
               <Route path="/" element={<Home/>}/>
+              <Route path="/transfer" element={<Transfer/>}/>
               <Route path="/:matchId" element={<Home/>}/>
               <Route path="/team/:id" element={<Team/>}/>
               <Route path="/team/:id/player/:playerId" element={<Team/>}/>
