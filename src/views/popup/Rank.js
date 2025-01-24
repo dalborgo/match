@@ -2,6 +2,7 @@ import React from 'react'
 import {
   Box,
   IconButton,
+  LinearProgress,
   Link,
   Modal,
   Table,
@@ -13,7 +14,7 @@ import {
   Typography
 } from '@mui/material'
 import { Link as RouterLink, useLocation, useNavigate, useParams } from 'react-router-dom'
-import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { useIsFetching, useQuery, useQueryClient } from '@tanstack/react-query'
 import DownloadIcon from '@mui/icons-material/Download'
 import CloseIcon from '@mui/icons-material/Close'
 import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf'
@@ -259,6 +260,7 @@ const Ranking = ({ rank, teamA, teamB }) => {
 
 const Rank = ({ rank }) => {
   const { matchId } = useParams()
+  const isFetching = useIsFetching()
   const { state: match_ = {} } = useLocation()
   const match = match_ || {}
   const navigate = useNavigate()
@@ -277,6 +279,12 @@ const Rank = ({ rank }) => {
       onClose={() => navigate('/')}
     >
       <Box sx={style}>
+        {isFetching > 0 && (
+          <LinearProgress
+            color="primary"
+            sx={{ position: 'absolute', top: 0, left: 0, width: '100%', height: 2 }}
+          />
+        )}
         <Box>
           <Box display="flex">
             <Box flexGrow={1}>
