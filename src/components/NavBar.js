@@ -1,7 +1,9 @@
 import { Link, useLocation } from 'react-router-dom'
 import { AppBar, Box, Button, LinearProgress, Toolbar } from '@mui/material'
 import { useIsFetching } from '@tanstack/react-query'
+import { envConfig } from '../init'
 
+const HOST = envConfig['BACKEND_HOST']
 const NavBar = () => {
   const location = useLocation()
   const isFetching = useIsFetching()
@@ -22,7 +24,7 @@ const NavBar = () => {
             Home
           </Button>
           {
-            (location.pathname === '/' || location.pathname === '/transfer') &&
+            (location.pathname === '/' || location.pathname === '/transfer') && HOST === 'localhost' &&
             (
               <Button
                 color={location.pathname === '/transfer' ? 'secondary' : 'inherit'}
