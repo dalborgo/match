@@ -1,7 +1,8 @@
 import React, { useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
-import { Grid, TableHeaderRow, VirtualTable, } from '@devexpress/dx-react-grid-material-ui'
+import { IntegratedFiltering, SearchState, } from '@devexpress/dx-react-grid'
+import { Grid, SearchPanel, TableHeaderRow, Toolbar, VirtualTable, } from '@devexpress/dx-react-grid-material-ui'
 import { Box } from '@mui/material'
 import { useTheme, withStyles } from '@mui/styles'
 
@@ -93,6 +94,8 @@ const Transfer = () => {
         rows={rows}
         columns={columns}
       >
+        <SearchState/>
+        <IntegratedFiltering/>
         <VirtualTable
           cellComponent={Cell}
           columnExtensions={tableColumnExtensions}
@@ -101,6 +104,8 @@ const Transfer = () => {
         <TableHeaderRow
           cellComponent={Head}
         />
+        <Toolbar/>
+        <SearchPanel/>
       </Grid>
     </Box>
   )

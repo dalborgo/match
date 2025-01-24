@@ -94,4 +94,10 @@
     left: 0;
 }
 
+@media (min-width: 600px) {
+    .css-1uu08lv-MuiToolbar-root {
+        min-height: 50px !important;
+    }
+}
+
 
