@@ -6,6 +6,7 @@ import { Box } from '@mui/material'
 import { useTheme, withStyles } from '@mui/styles'
 
 const tableColumnExtensions = [
+  { columnName: 'id', width: 60 },
   { columnName: 'name', width: 200 },
 ]
 
@@ -14,6 +15,7 @@ const renderSpecials = rows => {
   return output.join(', ')
 }
 const columns = [
+  { name: 'id', title: 'Id' },
   { name: 'name', title: 'Squadra' },
   {
     name: 'specials',
