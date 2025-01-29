@@ -400,6 +400,8 @@ const Home = () => {
             style={{ color: 'yellow', fontSize: 'small' }}>O</span></DownloadPdfButtonList>&nbsp;&nbsp;&nbsp;
           <DownloadPdfButtonList list={totalYellowCards} stat="yellow_card" stat2="protest_fouls"><span
             style={{ color: 'yellow', fontSize: 'small' }}>P</span></DownloadPdfButtonList>&nbsp;&nbsp;&nbsp;
+          <DownloadPdfButtonList list={totalYellowCards} stat="yellow_cards"><span
+            style={{ color: 'yellow', fontSize: 'small' }}>█</span></DownloadPdfButtonList>&nbsp;&nbsp;&nbsp;
           <DownloadPdfButtonList list={totalRedCards} stat="red_cards"><span
             style={{ color: 'red', fontSize: 'small' }}>█</span></DownloadPdfButtonList>
         </Box>
