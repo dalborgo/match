@@ -288,18 +288,23 @@ const Rank = ({ rank }) => {
         <Box>
           <Box display="flex">
             <Box flexGrow={1}>
-              Video: <Link
-              href={download.results.link}
-              sx={{
-                cursor: 'pointer',
-                textDecoration: 'none',
-                '&:hover': {
-                  textDecoration: 'underline'
-                }
-              }}
-            >
-              {matchId}
-            </Link>
+              {
+                hasResult &&
+                <>
+                  Video: <Link
+                  href={download.results.link}
+                  sx={{
+                    cursor: 'pointer',
+                    textDecoration: 'none',
+                    '&:hover': {
+                      textDecoration: 'underline'
+                    }
+                  }}
+                >
+                  {matchId}
+                </Link>
+                </>
+              }
             </Box>
             {
               hasResult &&
