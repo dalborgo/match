@@ -5,6 +5,7 @@ import Home from './views/Home'
 import Game from './views/Game'
 import Team from './views/Team'
 import Transfer from './views/Transfer'
+import Referee from './views/Referee'
 import { envConfig } from './init'
 import axios from 'axios'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
@@ -48,6 +49,7 @@ function App () {
               <Route path="/team/:id" element={<Team/>}/>
               <Route path="/team/:id/player/:playerId" element={<Team/>}/>
               <Route path="/game/:id" element={<Game/>}/>
+              <Route path="/referee" element={<Referee/>}/>
             </Routes>
           </Box>
         </Router>

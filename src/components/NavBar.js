@@ -24,7 +24,7 @@ const NavBar = () => {
             Home
           </Button>
           {
-            (location.pathname === '/' || location.pathname === '/transfer') && HOST === 'localhost' &&
+            (location.pathname === '/' || location.pathname === '/transfer' || location.pathname === '/referee') && HOST === 'localhost' &&
             (
               <Button
                 color={location.pathname === '/transfer' ? 'secondary' : 'inherit'}
@@ -58,6 +58,17 @@ const NavBar = () => {
                 state={{ ...state, teamName }}
               >
                 Game
+              </Button>
+            )
+          }
+          {
+            (
+              <Button
+                color={location.pathname.includes('/referee') ? 'secondary' : 'inherit'}
+                component={Link}
+                to={'/referee'}
+              >
+                Referee
               </Button>
             )
           }
