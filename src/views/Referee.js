@@ -6,12 +6,71 @@ import { Box } from '@mui/material'
 import { useTheme, withStyles } from '@mui/styles'
 
 const tableColumnExtensions = [
-  { columnName: 'id', width: 60 },
+  { columnName: 'refereedMatches', align: 'center' },
+  { columnName: 'totRefereedMatches', align: 'center' },
+  { columnName: 'fouls', align: 'center' },
+  { columnName: 'ycard1', align: 'center' },
+  { columnName: 'rcard', align: 'center' },
+  { columnName: 'ycard2', align: 'center' },
+  { columnName: 'totFouls', align: 'center' },
+  { columnName: 'totYcard1', align: 'center' },
+  { columnName: 'totRcard', align: 'center' },
+  { columnName: 'totYcard2', align: 'center' },
 ]
+
+const renderCurrent = (row, prop) => {
+  if (row[prop] === '-') { return '0'}
+  return `${(row[prop] / row['refereedMatches']).toFixed(2)} (${row[prop]})`
+}
+const renderTotal = (row, prop) => {
+  if (row[prop] === '-') { return '0'}
+  return `${(row[prop] / row['totRefereedMatches']).toFixed(2)} (${row[prop]})`
+}
 
 const columns = [
   { name: 'name', title: 'name' },
+  { name: 'refereedMatches', title: 'P.' },
+  { name: 'totRefereedMatches', title: 'Tot P.' },
+  { name: 'fouls', title: 'F.', getCellValue: renderCurrent },
+  { name: 'ycard1', title: '█', getCellValue: renderCurrent },
+  { name: 'rcard', title: '█', getCellValue: renderCurrent },
+  { name: 'ycard2', title: '2', getCellValue: renderCurrent },
+  { name: 'totFouls', title: 'Tot F.', getCellValue: renderTotal },
+  { name: 'totYcard1', title: 'Tot █', getCellValue: renderTotal },
+  { name: 'totRcard', title: 'Tot █', getCellValue: renderTotal },
+  { name: 'totYcard2', title: 'Tot 2', getCellValue: renderTotal },
 ]
+
+const Head = React.memo(withStyles(null, { withTheme: true })(props => {
+  const { column, theme, style, ...otherProps } = props
+  const cellStyle = {
+    padding: theme.spacing(1),
+    border: 0,
+    backgroundColor: '#191919',
+    fontSize: 12,
+  }
+  const combinedStyle = { ...style, ...cellStyle }
+  if (['totYcard1', 'totRcard', 'ycard1', 'rcard'].includes(column.name)) {
+    return (
+      <VirtualTable.Cell
+        {...props}
+        style={{ ...cellStyle, color: column.name.includes('card1') ? 'yellow' : 'red' }}
+      >
+        {props.children}
+      </VirtualTable.Cell>
+    )
+  }
+  return (
+    <VirtualTable.Cell
+      style={combinedStyle}
+      {...otherProps}
+    >
+      {
+        props.children
+      }
+    </VirtualTable.Cell>
+  )
+}))
 const Root = props => <Grid.Root {...props} style={{ height: '100%' }}/>
 const Referee = () => {
   const queryClient = useQueryClient()
@@ -49,24 +108,6 @@ const Referee = () => {
     )
   })
   
-  const Head = React.memo(withStyles(null, { withTheme: true })(props => {
-    const { column, theme, style, ...otherProps } = props
-    const cellStyle = {
-      padding: theme.spacing(1),
-      border: 0,
-      backgroundColor: '#191919',
-      fontSize: 12,
-    }
-    const combinedStyle = { ...style, ...cellStyle }
-    return (
-      <VirtualTable.Cell
-        style={combinedStyle}
-        {...otherProps}
-      >
-        {props.children}
-      </VirtualTable.Cell>
-    )
-  }))
   if (isPending) { return null}
   return (
     <Box
