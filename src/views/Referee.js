@@ -7,7 +7,6 @@ import { useTheme, withStyles } from '@mui/styles'
 
 const tableColumnExtensions = [
   { columnName: 'refereedMatches', align: 'center' },
-  { columnName: 'totRefereedMatches', align: 'center' },
   { columnName: 'fouls', align: 'center' },
   { columnName: 'ycard1', align: 'center' },
   { columnName: 'rcard', align: 'center' },
@@ -18,6 +17,12 @@ const tableColumnExtensions = [
   { columnName: 'totYcard2', align: 'center' },
 ]
 
+const renderName = (row, prop) => {
+  return `${row[prop]} (${row['years']})`
+}
+const renderPres = (row, prop) => {
+  return `${row[prop]} (${row['totRefereedMatches']})`
+}
 const renderCurrent = (row, prop) => {
   if (row[prop] === '-') { return '0'}
   return `${(row[prop] / row['refereedMatches']).toFixed(2)} (${row[prop]})`
@@ -28,17 +33,16 @@ const renderTotal = (row, prop) => {
 }
 
 const columns = [
-  { name: 'name', title: 'name' },
-  { name: 'refereedMatches', title: 'P.' },
-  { name: 'totRefereedMatches', title: 'Tot P.' },
-  { name: 'fouls', title: 'F.', getCellValue: renderCurrent },
+  { name: 'name', title: 'name', getCellValue: renderName },
+  { name: 'refereedMatches', title: 'P', getCellValue: renderPres },
+  { name: 'fouls', title: 'F', getCellValue: renderCurrent },
   { name: 'ycard1', title: '█', getCellValue: renderCurrent },
   { name: 'rcard', title: '█', getCellValue: renderCurrent },
-  { name: 'ycard2', title: '2', getCellValue: renderCurrent },
+  { name: 'ycard2', title: '2°', getCellValue: renderCurrent },
   { name: 'totFouls', title: 'Tot F.', getCellValue: renderTotal },
   { name: 'totYcard1', title: 'Tot █', getCellValue: renderTotal },
   { name: 'totRcard', title: 'Tot █', getCellValue: renderTotal },
-  { name: 'totYcard2', title: 'Tot 2', getCellValue: renderTotal },
+  { name: 'totYcard2', title: 'Tot 2°', getCellValue: renderTotal },
 ]
 
 const Head = React.memo(withStyles(null, { withTheme: true })(props => {
