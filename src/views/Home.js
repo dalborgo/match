@@ -298,11 +298,17 @@ const Home = () => {
                           }
                           enterDelay={1000}
                         >
-                          {match?.separator.replace('<span>(Rinviata)</span>', 'rinv.')}
+                          {match?.separator
+                            .replace('<span>(Rinviata)</span>', 'rinv.')
+                            .replace('<span>(Cancelled)</span>', 'canc.')
+                            .replace('<span>(Non disputata)</span>', 'canc.')}
                         </Tooltip>
                       )
                       :
-                      match?.separator.replace('<span>(Rinviata)</span>', 'rinv.')
+                      match?.separator
+                        .replace('<span>(Rinviata)</span>', 'rinv.')
+                        .replace('<span>(Cancelled)</span>', 'canc.')
+                        .replace('<span>(Non disputata)</span>', 'canc.')
                     }
                   </Link>
                   <Typography
