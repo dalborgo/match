@@ -301,6 +301,7 @@ const Home = () => {
                           {match?.separator
                             .replace('<span>(Rinviata)</span>', 'rinv.')
                             .replace('<span>(Cancelled)</span>', 'canc.')
+                            .replace('<span>(Postponed)</span>', 'canc.')
                             .replace('<span>(Non disputata)</span>', 'canc.')}
                         </Tooltip>
                       )
@@ -308,6 +309,7 @@ const Home = () => {
                       match?.separator
                         .replace('<span>(Rinviata)</span>', 'rinv.')
                         .replace('<span>(Cancelled)</span>', 'canc.')
+                        .replace('<span>(Postponed)</span>', 'post.')
                         .replace('<span>(Non disputata)</span>', 'canc.')
                     }
                   </Link>
