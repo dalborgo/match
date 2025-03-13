@@ -10,7 +10,7 @@ const style = {
   position: 'absolute',
   top: '50%',
   left: '50%',
-  width: 1000,
+  width: 1200,
   height: 600,
   transform: 'translate(-50%, -50%)',
   bgcolor: 'background.paper',
@@ -70,7 +70,7 @@ const RefereeStats = () => {
             return (
               <Box key={index} display="flex">
                 <Box mr={2}>{match['date']}</Box>
-                <Box width={250}>{match['group']}</Box>
+                <Box width={340}>{match['group']}</Box>
                 <Box width={360}>
                   {
                     !isU20 ?
@@ -126,6 +126,11 @@ const RefereeStats = () => {
                       :
                       match['penaltyTotal']
                   }
+                  {index === matches.length - 1 && (
+                    <Box>
+                      P
+                    </Box>
+                  )}
                 </Box>
                 <Box width={100}>
                   {
