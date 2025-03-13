@@ -42,7 +42,7 @@ export const getVideoListName = (video, teamAName) => {
   return `nm=${video['link']}\ndr=20\nft=57\ntt=${name}\nbr!`
 }
 
-function DownloadPdfButton ({ matchId, teamAId, teamBId, teamAName, teamBName, stat, children, style = {} }) {
+export function DownloadPdfButton ({ matchId, teamAId, teamBId, teamAName, teamBName, stat, children, style = {} }) {
   const queryClient = useQueryClient()
   const downloadPdf = async () => {
     const [dataA, dataB] = await queryClient.fetchQuery({
