@@ -7,6 +7,8 @@ import { useTheme, withStyles } from '@mui/styles'
 import axios from 'axios'
 import { getVideoListName } from './Home'
 import { envConfig } from '../init'
+import RefereeStats from './popup/RefereeStats'
+import { useLocation, useNavigate, useParams } from 'react-router-dom'
 
 const PORT = envConfig['BACKEND_PORT']
 const HOST = envConfig['BACKEND_HOST']
@@ -124,7 +126,9 @@ const Head = React.memo(withStyles(null, { withTheme: true })(props => {
 const Root = props => <Grid.Root {...props} style={{ height: '100%' }}/>
 const Referee = () => {
   const queryClient = useQueryClient()
-  
+  const { pathname } = useLocation()
+  const navigate = useNavigate()
+  const { refId } = useParams()
   const { isPending, data } = useQuery({
     queryKey: ['referee/list'],
     staleTime: 300000,
@@ -161,6 +165,31 @@ const Referee = () => {
           >
             {value}
           </DownloadPdfButton>
+        </VirtualTable.Cell>
+      )
+    }
+    if (['name'].includes(column.name)) {
+      return (
+        <VirtualTable.Cell
+          {...props}
+          style={{ ...cellStyle }}
+        >
+          <Link
+            onClick={
+              () => {
+                navigate(`${pathname}/${row.refereeId}`, { state: row })
+              }
+            }
+            sx={{
+              cursor: 'pointer',
+              textDecoration: 'none',
+              '&:hover': {
+                textDecoration: 'underline'
+              }
+            }}
+          >
+            <span style={{ color: '#b3b3b3' }}>{value}</span>
+          </Link>
         </VirtualTable.Cell>
       )
     }
@@ -240,6 +269,7 @@ const Referee = () => {
         <Toolbar/>
         <SearchPanel/>
       </Grid>
+      {refId && <RefereeStats/>}
     </Box>
   )
 }

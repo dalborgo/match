@@ -50,6 +50,7 @@ function App () {
               <Route path="/team/:id/player/:playerId" element={<Team/>}/>
               <Route path="/game/:id" element={<Game/>}/>
               <Route path="/referee" element={<Referee/>}/>
+              <Route path="/referee/:refId" element={<Referee/>}/>
             </Routes>
           </Box>
         </Router>
