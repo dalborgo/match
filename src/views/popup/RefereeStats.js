@@ -58,8 +58,8 @@ const RefereeStats = () => {
             return (
               <Box key={index} display="flex">
                 <Box mr={2}>{match['date']}</Box>
-                <Box width={300}>{match['group']}</Box>
-                <Box width={350}>{title}</Box>
+                <Box width={250}>{match['group']}</Box>
+                <Box width={360}>{title}</Box>
                 <Box width={100}>{result}</Box>
                 <Box width={100}>{match['foulTotal']}</Box>
                 <Box width={100}>{match['penaltyTotal']}</Box>
