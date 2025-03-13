@@ -150,7 +150,7 @@ const Referee = () => {
       height: 42,
     }
     const combinedStyle = { ...style, ...cellStyle }
-    if (column.name === 'refereedMatches') {
+    if (column.name === 'totFouls') {
       return (
         <VirtualTable.Cell
           style={{
