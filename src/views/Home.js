@@ -86,7 +86,7 @@ export function DownloadPdfButton ({ matchId, teamAId, teamBId, teamAName, teamB
   )
 }
 
-function DownloadPdfButtonList ({ list, stat, stat2 = 'penalty_fouls', children, style = {} }) {
+export function DownloadPdfButtonList ({ list, stat, stat2 = 'penalty_fouls', children, style = {} }) {
   const queryClient = useQueryClient()
   
   const downloadPdf = async () => {

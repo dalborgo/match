@@ -4,7 +4,7 @@ import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 import CloseIcon from '@mui/icons-material/Close'
 import './wyscout.css'
-import { DownloadPdfButton } from '../Home'
+import { DownloadPdfButton, DownloadPdfButtonList } from '../Home'
 
 const style = {
   position: 'absolute',
@@ -32,6 +32,7 @@ const RefereeStats = () => {
   })
   const matches = data?.results || []
   if (isPending) {return null}
+  const totalPenalties = [], totalYellowCards = [], totalRedCards = []
   return (<Modal
       open={Boolean(true)}
       onClose={() => {
@@ -66,6 +67,33 @@ const RefereeStats = () => {
               } else {
                 away = currentTeam
               }
+            }
+            if (match['penaltyTotal']) {
+              totalPenalties.push({
+                teamAName: home['teamName'],
+                teamBName: away['teamName'],
+                teamAId: home['teamId'],
+                teamBId: away['teamId'],
+                matchId: match['id'],
+              })
+            }
+            if (match['yellowTotal']) {
+              totalYellowCards.push({
+                teamAName: home['teamName'],
+                teamBName: away['teamName'],
+                teamAId: home['teamId'],
+                teamBId: away['teamId'],
+                matchId: match['id'],
+              })
+            }
+            if (match['redTotal']) {
+              totalRedCards.push({
+                teamAName: home['teamName'],
+                teamBName: away['teamName'],
+                teamAId: home['teamId'],
+                teamBId: away['teamId'],
+                matchId: match['id'],
+              })
             }
             return (
               <Box key={index} display="flex">
@@ -126,11 +154,15 @@ const RefereeStats = () => {
                       :
                       match['penaltyTotal']
                   }
-                  {index === matches.length - 1 && (
-                    <Box>
-                      P
-                    </Box>
-                  )}
+                  {
+                    index === matches.length - 1 && (
+                      <Box>
+                        <DownloadPdfButtonList list={totalPenalties} stat="fouls">
+                          <span style={{ color: 'cyan', fontSize: 'small' }}>P</span>
+                        </DownloadPdfButtonList>
+                      </Box>
+                    )
+                  }
                 </Box>
                 <Box width={100}>
                   {
@@ -149,6 +181,14 @@ const RefereeStats = () => {
                       :
                       match['yellowTotal']
                   }
+                  {
+                    index === matches.length - 1 && (
+                      <Box>
+                        <DownloadPdfButtonList list={totalYellowCards} stat="yellow_cards">
+                          <span style={{ color: 'yellow', fontSize: 'small' }}>█</span></DownloadPdfButtonList>
+                      </Box>
+                    )
+                  }
                 </Box>
                 <Box>
                   {
@@ -166,6 +206,14 @@ const RefereeStats = () => {
                       </DownloadPdfButton>
                       :
                       match['redTotal']
+                  }
+                  {
+                    index === matches.length - 1 && (
+                      <Box>
+                        <DownloadPdfButtonList list={totalRedCards} stat="red_cards">
+                          <span style={{ color: 'red', fontSize: 'small' }}>█</span></DownloadPdfButtonList>
+                      </Box>
+                    )
                   }
                 </Box>
               </Box>

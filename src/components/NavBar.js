@@ -24,18 +24,6 @@ const NavBar = () => {
             Home
           </Button>
           {
-            (location.pathname === '/' || location.pathname === '/transfer' || location.pathname === '/referee') && HOST === 'localhost' &&
-            (
-              <Button
-                color={location.pathname === '/transfer' ? 'secondary' : 'inherit'}
-                component={Link}
-                to="/transfer"
-              >
-                Transfer
-              </Button>
-            )
-          }
-          {
             (location.pathname.includes('/team') || location.pathname.includes('/game')) &&
             (
               <Button
@@ -45,6 +33,17 @@ const NavBar = () => {
                 state={{ ...state, teamName }}
               >
                 Team
+              </Button>
+            )
+          }
+          {
+            (
+              <Button
+                color={location.pathname.includes('/referee') ? 'secondary' : 'inherit'}
+                component={Link}
+                to={'/referee'}
+              >
+                Referee
               </Button>
             )
           }
@@ -62,13 +61,14 @@ const NavBar = () => {
             )
           }
           {
+            (location.pathname === '/' || location.pathname === '/transfer' || location.pathname === '/referee') && HOST === 'localhost' &&
             (
               <Button
-                color={location.pathname.includes('/referee') ? 'secondary' : 'inherit'}
+                color={location.pathname === '/transfer' ? 'secondary' : 'inherit'}
                 component={Link}
-                to={'/referee'}
+                to="/transfer"
               >
-                Referee
+                <Box fontSize="x-small">Transfer</Box>
               </Button>
             )
           }
