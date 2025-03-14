@@ -227,7 +227,6 @@ const Home = () => {
                 teamBId: teamIdCode[match['teamBName']],
                 matchId: match['objId'],
               })
-              console.log('links:', links)
               return (
                 <Box
                   key={index}
