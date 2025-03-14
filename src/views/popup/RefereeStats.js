@@ -33,7 +33,8 @@ const RefereeStats = () => {
   const matches = data?.results || []
   if (isPending) {return null}
   const totalPenalties = [], totalYellowCards = [], totalRedCards = []
-  return (<Modal
+  return (
+    <Modal
       open={Boolean(true)}
       onClose={() => {
         navigate('/referee')

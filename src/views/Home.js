@@ -147,7 +147,7 @@ const Home = () => {
   const [initPage, setInitPage] = useState('')
   const { matchId } = useParams()
   const navigate = useNavigate()
-  const { isPending, data, isSuccess } = useQuery({
+  const { isPending, data, isSuccess, refetch } = useQuery({
     queryKey: [`calendar/${page}`],
     placeholderData: keepPreviousData,
     staleTime: 300000,
@@ -162,6 +162,7 @@ const Home = () => {
   }, [data, initPage, isSuccess])
   if (isPending) {return null}
   const rank = data?.results?.rank || []
+  const links = data?.results?.links || []
   const [teamIdCode, roundNameCode] = getTeamIdCodes(rank)
   const list = data?.results?.list || []
   const general = data?.results?.callbacks?.general || []
@@ -226,6 +227,7 @@ const Home = () => {
                 teamBId: teamIdCode[match['teamBName']],
                 matchId: match['objId'],
               })
+              console.log('links:', links)
               return (
                 <Box
                   key={index}
@@ -337,7 +339,25 @@ const Home = () => {
                   <Typography sx={{ flexBasis: '60px', textAlign: 'center', maxWidth: '80px' }}>
                     <Tooltip placement="left"
                              title={`${match['matchStats']?.foulHome} / ${match['matchStats']?.foulAway}`}>
-                      <span style={{ color: 'silver', cursor: 'help' }}>{match['matchStats']?.foulTotal || ''}</span>
+                      <span style={{ color: 'silver', cursor: 'help' }}>
+                        {
+                          Boolean(links[index]) ?
+                            <span
+                              onClick={() => window.location.href = links[index]}
+                              style={{
+                                color: 'silver',
+                                cursor: 'pointer',
+                                textDecoration: 'none'
+                              }}
+                              onMouseOver={(e) => e.target.style.textDecoration = 'underline'}
+                              onMouseOut={(e) => e.target.style.textDecoration = 'none'}
+                            >
+                              {match['matchStats']?.foulTotal || ''}
+                            </span>
+                            :
+                            match['matchStats']?.foulTotal || ''
+                        }
+                      </span>
                     </Tooltip>
                   </Typography>
                   <Typography sx={{ flexBasis: '60px', textAlign: 'center', maxWidth: '80px' }}>
@@ -400,6 +420,17 @@ const Home = () => {
             })}
         </Box>
         <Box pr={2} pt={0.5} textAlign="right">
+          <Link
+            sx={{
+              cursor: 'pointer',
+              textDecoration: 'none',
+              '&:hover': {
+                textDecoration: 'underline',
+              }
+            }}
+            onClick={() => refetch()}>
+            ↻
+          </Link>&nbsp;&nbsp;&nbsp;
           <DownloadPdfButtonList list={totalGames} stat="offsides"><span
             style={{ color: 'cyan', fontSize: 'small' }}>O</span></DownloadPdfButtonList>&nbsp;&nbsp;&nbsp;
           <DownloadPdfButtonList list={totalPenalties} stat="fouls"><span

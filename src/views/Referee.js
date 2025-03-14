@@ -93,43 +93,13 @@ function DownloadPdfButton ({ refId, refName, stat, children, style = {} }) {
   )
 }
 
-const Head = React.memo(withStyles(null, { withTheme: true })(props => {
-  const { column, theme, style, ...otherProps } = props
-  const cellStyle = {
-    padding: theme.spacing(1),
-    border: 0,
-    backgroundColor: '#191919',
-    fontSize: 12,
-  }
-  const combinedStyle = { ...style, ...cellStyle }
-  if (['totYcard1', 'totRcard', 'ycard1', 'rcard'].includes(column.name)) {
-    return (
-      <VirtualTable.Cell
-        {...props}
-        style={{ ...cellStyle, color: column.name.includes('card1') ? 'yellow' : 'red' }}
-      >
-        {props.children}
-      </VirtualTable.Cell>
-    )
-  }
-  return (
-    <VirtualTable.Cell
-      style={combinedStyle}
-      {...otherProps}
-    >
-      {
-        props.children
-      }
-    </VirtualTable.Cell>
-  )
-}))
 const Root = props => <Grid.Root {...props} style={{ height: '100%' }}/>
 const Referee = () => {
   const queryClient = useQueryClient()
   const { pathname } = useLocation()
   const navigate = useNavigate()
   const { refId } = useParams()
-  const { isPending, data } = useQuery({
+  const { isPending, data, refetch } = useQuery({
     queryKey: ['referee/list'],
     staleTime: 300000,
   })
@@ -139,6 +109,59 @@ const Referee = () => {
     }
   }, [queryClient])
   const rows = data?.results || []
+  const Head = React.memo(withStyles(null, { withTheme: true })(props => {
+    const { column, theme, style, ...otherProps } = props
+    const cellStyle = {
+      padding: theme.spacing(1),
+      border: 0,
+      backgroundColor: '#191919',
+      fontSize: 12,
+    }
+    const combinedStyle = { ...style, ...cellStyle }
+    if (['totYcard1', 'totRcard', 'ycard1', 'rcard'].includes(column.name)) {
+      return (
+        <VirtualTable.Cell
+          {...props}
+          style={{ ...cellStyle, color: column.name.includes('card1') ? 'yellow' : 'red' }}
+        >
+          {props.children}
+        </VirtualTable.Cell>
+      )
+    }
+    if (column.name === 'name') {
+      return (
+        <VirtualTable.Cell
+          style={combinedStyle}
+          {...otherProps}
+        >
+          <Box display="flex">
+            {column.name}&nbsp;&nbsp;
+            <Link
+              sx={{
+                cursor: 'pointer',
+                textDecoration: 'none',
+                '&:hover': {
+                  textDecoration: 'underline',
+                }
+              }}
+              onClick={() => refetch()}>
+              <Box fontSize={17}>↻</Box>
+            </Link>
+          </Box>
+        </VirtualTable.Cell>
+      )
+    }
+    return (
+      <VirtualTable.Cell
+        style={combinedStyle}
+        {...otherProps}
+      >
+        {
+          props.children
+        }
+      </VirtualTable.Cell>
+    )
+  }))
   const Cell = React.memo(props => {
     const { column, value, row, style, ...otherProps } = props
     const theme = useTheme()
