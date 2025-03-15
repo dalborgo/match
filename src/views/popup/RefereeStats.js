@@ -99,8 +99,8 @@ const RefereeStats = () => {
             return (
               <Box key={index} display="flex">
                 <Box mr={2}>{match['date']}</Box>
-                <Box width={340}>{match['group']}</Box>
-                <Box width={360}>
+                <Box width={300}>{match['group']}</Box>
+                <Box width={350}>
                   {
                     !isU20 ?
                       <Link

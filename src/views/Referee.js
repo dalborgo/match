@@ -184,7 +184,7 @@ const Referee = () => {
           <DownloadPdfButton
             refId={row.refereeId}
             refName={row.name}
-            stat={101}
+            stat={101} /*numero qualsiasi intero*/
           >
             {value}
           </DownloadPdfButton>
@@ -204,6 +204,7 @@ const Referee = () => {
               }
             }
             sx={{
+              color: '#b3b3b3',
               cursor: 'pointer',
               textDecoration: 'none',
               '&:hover': {
