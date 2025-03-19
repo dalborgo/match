@@ -134,6 +134,7 @@ const Referee = () => {
         >
           <Link
             href={`http://localhost:3005?hudl=${row['id']}`}
+            target="_blank"
             sx={{
               color,
               cursor: 'pointer',
