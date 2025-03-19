@@ -48,6 +48,17 @@ const NavBar = () => {
             )
           }
           {
+            (
+              <Button
+                color={location.pathname.includes('/history') ? 'secondary' : 'inherit'}
+                component={Link}
+                to={'/history'}
+              >
+                History
+              </Button>
+            )
+          }
+          {
             (location.pathname.includes('/team') || location.pathname.includes('/game')) &&
             (
               <Button
