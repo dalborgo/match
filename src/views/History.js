@@ -126,6 +126,7 @@ const Referee = () => {
       )
     }
     if (['TOT'].includes(column.name)) {
+      const color = row['CRUCIAL_MISTAKE'] ? 'red ' : row['MAYBE_MISTAKE'] ? 'orange' : ''
       return (
         <VirtualTable.Cell
           {...props}
@@ -134,6 +135,7 @@ const Referee = () => {
           <Link
             href={`http://localhost:3005?hudl=${row['id']}`}
             sx={{
+              color,
               cursor: 'pointer',
               textDecoration: 'none',
               '&:hover': {
@@ -141,7 +143,7 @@ const Referee = () => {
               }
             }}
           >
-            <span style={{ color: row['CRUCIAL_MISTAKE'] ? 'red ' : row['MAYBE_MISTAKE'] ? 'orange' : '' }}>
+            <span style={{ color }}>
               {value}
             </span>
           </Link>
