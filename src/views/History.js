@@ -21,7 +21,7 @@ const extractDate = (str, raw) => {
 }
 
 const sortByExtractedDateDesc = arr => {
-  return arr.sort((a, b) => {
+  return arr?.sort((a, b) => {
     const dateA = extractDate(a.title, true)
     const dateB = extractDate(b.title, true)
     return dateB.localeCompare(dateA)
