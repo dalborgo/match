@@ -5,7 +5,7 @@ import { Grid, SearchPanel, TableHeaderRow, Toolbar, VirtualTable, } from '@deve
 import { Box, Link } from '@mui/material'
 import { useTheme, withStyles } from '@mui/styles'
 
-const extractDate = str => {
+const extractDate = (str, raw) => {
   const datePatterns = [
     /(\d{4})-(\d{2})-(\d{2})/,
     /(\d{4})(\d{2})(\d{2})/
@@ -14,10 +14,18 @@ const extractDate = str => {
     const match = str.match(pattern)
     if (match) {
       const [, year, month, day] = match
-      return `${day}/${month}/${year}`
+      return raw ? `${year}${month}${day}` : `${day}/${month}/${year}`
     }
   }
   return ''
+}
+
+const sortByExtractedDateDesc = arr => {
+  return arr.sort((a, b) => {
+    const dateA = extractDate(a.title, true)
+    const dateB = extractDate(b.title, true)
+    return dateB.localeCompare(dateA)
+  })
 }
 
 const tableColumnExtensions = [
@@ -47,7 +55,7 @@ const columns = [
   { name: 'OA', title: 'OA' },
   { name: 'OT', title: 'OT' },
   { name: 'TOT_VAL', title: 'Pos', getCellValue: row => row['TOT_VAL'] > 0 ? (row['POS'] / row['TOT_VAL']) * 100 : 0 },
-  { name: 'TOT', title: 'A' },
+  { name: 'TOT', title: 'A', getCellValue: ({ TOT }) => TOT > 0 ? TOT : '' },
 ]
 
 const Root = props => <Grid.Root {...props} style={{ height: '100%' }}/>
@@ -62,7 +70,7 @@ const Referee = () => {
       queryClient.cancelQueries({ queryKey: ['hudl-grid'] })
     }
   }, [queryClient])
-  const rows = data?.results || []
+  const rows = sortByExtractedDateDesc(data?.results) || []
   const Head = React.memo(withStyles(null, { withTheme: true })(props => {
     const { column, theme, style, ...otherProps } = props
     const cellStyle = {
@@ -115,7 +123,18 @@ const Referee = () => {
         </VirtualTable.Cell>
       )
     }
-    if (['TOT_VAL'].includes(column.name)) {
+    if (['TORN'].includes(column.name)) {
+      return (
+        <VirtualTable.Cell
+          {...props}
+          style={{ ...cellStyle }}
+        >
+          <span
+            style={{ color: value === 'SERIE A' ? 'cyan ' : value === 'SERIE B' ? 'lightgreen' : 'lightgrey' }}>{value}</span>
+        </VirtualTable.Cell>
+      )
+    }
+    if (['TOT_VAL'].includes(column.name) && value > 0) {
       return (
         <VirtualTable.Cell
           {...props}
