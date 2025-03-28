@@ -19,9 +19,16 @@ const NavBar = () => {
           <Button
             color={location.pathname === '/' ? 'secondary' : 'inherit'}
             component={Link}
-            to="/"
+            to={'/'}
           >
             Home
+          </Button>
+          <Button
+            color={location.pathname.includes('/calendar') ? 'secondary' : 'inherit'}
+            component={Link}
+            to="/calendar"
+          >
+            Calendar
           </Button>
           {
             (location.pathname.includes('/team') || location.pathname.includes('/game')) &&
@@ -48,17 +55,6 @@ const NavBar = () => {
             )
           }
           {
-            (
-              <Button
-                color={location.pathname.includes('/history') ? 'secondary' : 'inherit'}
-                component={Link}
-                to={'/history'}
-              >
-                History
-              </Button>
-            )
-          }
-          {
             (location.pathname.includes('/team') || location.pathname.includes('/game')) &&
             (
               <Button
@@ -72,7 +68,7 @@ const NavBar = () => {
             )
           }
           {
-            (location.pathname === '/' || location.pathname === '/transfer' || location.pathname === '/referee') && HOST === 'localhost' &&
+            (['/', '/transfer', '/referee', '/calendar'].includes(location.pathname)) && HOST === 'localhost' &&
             (
               <Button
                 color={location.pathname === '/transfer' ? 'secondary' : 'inherit'}

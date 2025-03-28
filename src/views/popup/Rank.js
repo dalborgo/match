@@ -276,7 +276,7 @@ const Rank = ({ rank }) => {
   return (
     <Modal
       open={Boolean(true)}
-      onClose={() => navigate('/')}
+      onClose={() => navigate('/calendar')}
     >
       <Box sx={style}>
         {isFetching > 0 && (
@@ -311,7 +311,7 @@ const Rank = ({ rank }) => {
               <DownloadPdfButton matchId={matchId}/>
             }
             <DownloadVideo videoA={videoA} videoB={videoB} teamAName={match.teamAName} teamBName={match.teamBName}/>
-            <IconButton onClick={() => navigate('/')}><CloseIcon/></IconButton>
+            <IconButton onClick={() => navigate('/calendar')}><CloseIcon/></IconButton>
           </Box>
           <Box display="flex">
             <VideoList

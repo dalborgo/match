@@ -61,7 +61,7 @@ const columns = [
 const Root = props => <Grid.Root {...props} style={{ height: '100%' }}/>
 const Referee = () => {
   const queryClient = useQueryClient()
-  const { isPending, data } = useQuery({
+  const { isPending, data, refetch } = useQuery({
     queryKey: ['hudl-grid'],
     staleTime: 300000,
   })
@@ -80,6 +80,26 @@ const Referee = () => {
       fontSize: 12,
     }
     const combinedStyle = { ...style, ...cellStyle }
+    if (['TOT'].includes(column.name)) {
+      return (
+        <VirtualTable.Cell
+          style={combinedStyle}
+          {...otherProps}
+        >
+          <Link
+            sx={{
+              cursor: 'pointer',
+              textDecoration: 'none',
+              '&:hover': {
+                textDecoration: 'underline',
+              }
+            }}
+            onClick={() => refetch()}>
+            <Box fontSize={17}>↻</Box>
+          </Link>
+        </VirtualTable.Cell>
+      )
+    }
     return (
       <VirtualTable.Cell
         style={combinedStyle}

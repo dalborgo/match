@@ -261,7 +261,7 @@ const Home = () => {
                   </Typography>
                   <Link
                     onClick={async () => {
-                      navigate(`/${match['objId']}`, {
+                      navigate(`/calendar/${match['objId']}`, {
                         state: {
                           ...match,
                           group: roundNameCode[match['teamAName']],

@@ -44,15 +44,15 @@ function App () {
           <NavBar/>
           <Box sx={{ padding: 0, paddingTop: 0 }}>
             <Routes>
-              <Route path="/" element={<Home/>}/>
+              <Route path="/" element={<History/>}/>
+              <Route path="/calendar" element={<Home/>}/>
               <Route path="/transfer" element={<Transfer/>}/>
-              <Route path="/:matchId" element={<Home/>}/>
+              <Route path="/calendar/:matchId" element={<Home/>}/>
               <Route path="/team/:id" element={<Team/>}/>
               <Route path="/team/:id/player/:playerId" element={<Team/>}/>
               <Route path="/game/:id" element={<Game/>}/>
               <Route path="/referee" element={<Referee/>}/>
               <Route path="/referee/:refId" element={<Referee/>}/>
-              <Route path="/history" element={<History/>}/>
             </Routes>
           </Box>
         </Router>
