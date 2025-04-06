@@ -415,6 +415,7 @@ const Home = () => {
                   </Typography>
                   <Typography sx={{ flexBasis: '250px', textAlign: 'right', fontStyle: 'italic', color: '#4caf50' }}>
                      <span
+                       title={`${match['teamAName']} - ${match['teamBName']}`}
                        onClick={handleCopy}
                        style={{
                          cursor: 'pointer',
