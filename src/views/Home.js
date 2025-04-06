@@ -193,6 +193,11 @@ const Home = () => {
         <Box>
           {
             list.map((match, index) => {
+              const handleCopy = () => {
+                const dtk = document.getElementById('dtk')?.value || ''
+                const textToCopy = `g${match['objId']}${dtk ? '-' + dtk : ''}`
+                navigator.clipboard.writeText(textToCopy)
+              }
               if (match['matchStats']?.yellowTotal) {
                 totalYellowCards.push({
                   teamAName: match['teamAName'],
@@ -409,7 +414,17 @@ const Home = () => {
                     </DownloadPdfButton>
                   </Typography>
                   <Typography sx={{ flexBasis: '250px', textAlign: 'right', fontStyle: 'italic', color: '#4caf50' }}>
-                    {manageDate(match.data)}{' '}
+                     <span
+                       onClick={handleCopy}
+                       style={{
+                         cursor: 'pointer',
+                         textDecoration: 'none',
+                       }}
+                       onMouseEnter={event => event.currentTarget.style.textDecoration = 'underline'}
+                       onMouseLeave={event => event.currentTarget.style.textDecoration = 'none'}
+                     >
+                        {manageDate(match.data)}{' '}
+                    </span>
                     <span style={{ color: getColor(roundNameCode[match['teamAName']]) }}>
                       {roundNameCode[match['teamAName']]?.split(' - ')?.[1]}
                     </span>
