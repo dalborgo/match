@@ -19,7 +19,7 @@ const NavBar = () => {
           <Button
             color={location.pathname === '/' ? 'secondary' : 'inherit'}
             component={Link}
-            to={'/'}
+            to="/"
           >
             Home
           </Button>
