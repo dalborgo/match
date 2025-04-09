@@ -7,6 +7,7 @@ import { getSection } from '../files'
 import Rank from './popup/Rank'
 import axios from 'axios'
 import { envConfig } from '../init'
+import { CopyToClipboard } from 'react-copy-to-clipboard'
 
 const PORT = envConfig['BACKEND_PORT']
 const HOST = envConfig['BACKEND_HOST']
@@ -193,11 +194,8 @@ const Home = () => {
         <Box>
           {
             list.map((match, index) => {
-              const handleCopy = () => {
-                const dtk = document.getElementById('dtk')?.value || ''
-                const textToCopy = `g${match['objId']}${dtk ? '-' + dtk : ''}`
-                navigator.clipboard.writeText(textToCopy)
-              }
+              const dtk = document.getElementById('dtk')?.value || ''
+              const textToCopy = `g${match['objId']}${dtk ? '-' + dtk : ''}`
               if (match['matchStats']?.yellowTotal) {
                 totalYellowCards.push({
                   teamAName: match['teamAName'],
@@ -414,18 +412,19 @@ const Home = () => {
                     </DownloadPdfButton>
                   </Typography>
                   <Typography sx={{ flexBasis: '250px', textAlign: 'right', fontStyle: 'italic', color: '#4caf50' }}>
-                     <span
-                       title={`${match['teamAName']} - ${match['teamBName']}`}
-                       onClick={handleCopy}
-                       style={{
-                         cursor: 'pointer',
-                         textDecoration: 'none',
-                       }}
-                       onMouseEnter={event => event.currentTarget.style.textDecoration = 'underline'}
-                       onMouseLeave={event => event.currentTarget.style.textDecoration = 'none'}
-                     >
+                    <CopyToClipboard text={`g${match['objId']}${dtk ? '-' + dtk : ''}`}>
+                      <span
+                        onMouseEnter={event => event.currentTarget.style.textDecoration = 'underline'}
+                        onMouseLeave={event => event.currentTarget.style.textDecoration = 'none'}
+                        style={{
+                          cursor: 'pointer',
+                          textDecoration: 'none',
+                        }}
+                        title={`${match['teamAName']} - ${match['teamBName']}`}
+                      >
                         {manageDate(match.data)}{' '}
-                    </span>
+                      </span>
+                    </CopyToClipboard>
                     <span style={{ color: getColor(roundNameCode[match['teamAName']]) }}>
                       {roundNameCode[match['teamAName']]?.split(' - ')?.[1]}
                     </span>
