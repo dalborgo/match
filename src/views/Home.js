@@ -195,7 +195,6 @@ const Home = () => {
           {
             list.map((match, index) => {
               const dtk = document.getElementById('dtk')?.value || ''
-              const textToCopy = `g${match['objId']}${dtk ? '-' + dtk : ''}`
               if (match['matchStats']?.yellowTotal) {
                 totalYellowCards.push({
                   teamAName: match['teamAName'],
