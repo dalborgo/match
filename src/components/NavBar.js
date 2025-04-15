@@ -21,14 +21,14 @@ const NavBar = () => {
             component={Link}
             to="/"
           >
-            Home
+            Calendar
           </Button>
           <Button
-            color={location.pathname.includes('/calendar') ? 'secondary' : 'inherit'}
+            color={location.pathname.includes('/history') ? 'secondary' : 'inherit'}
             component={Link}
-            to="/calendar"
+            to="/history"
           >
-            Calendar
+            History
           </Button>
           {
             (location.pathname.includes('/team') || location.pathname.includes('/game')) &&
@@ -68,7 +68,7 @@ const NavBar = () => {
             )
           }
           {
-            (['/', '/transfer', '/referee', '/calendar'].includes(location.pathname)) && HOST === 'localhost' &&
+            (['/', '/transfer', '/referee', '/history'].includes(location.pathname)) && HOST === 'localhost' &&
             (
               <Button
                 color={location.pathname === '/transfer' ? 'secondary' : 'inherit'}

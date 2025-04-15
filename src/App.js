@@ -44,8 +44,8 @@ function App () {
           <NavBar/>
           <Box sx={{ padding: 0, paddingTop: 0 }}>
             <Routes>
-              <Route path="/" element={<History/>}/>
-              <Route path="/calendar" element={<Home/>}/>
+              <Route path="/" element={<Home/>}/>
+              <Route path="/history" element={<History/>}/>
               <Route path="/transfer" element={<Transfer/>}/>
               <Route path="/calendar/:matchId" element={<Home/>}/>
               <Route path="/team/:id" element={<Team/>}/>
