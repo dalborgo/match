@@ -56,13 +56,20 @@ export function DownloadPdfButton ({ matchId, teamAId, teamBId, teamAName, teamB
       },
       meta: { isManualFetching: true }
     })
-    const outputA = dataA.results.map(video => {
-      return getVideoListName(video, teamAName)
-    })
-    const outputB = dataB.results.map(video => {
-      return getVideoListName(video, teamBName)
-    })
-    const toSave = [...outputA, ...outputB].join('\n')
+    const combined = [
+      ...dataA.results.map(video => ({
+        name: getVideoListName(video, teamAName),
+        start: video.start
+      })),
+      ...dataB.results.map(video => ({
+        name: getVideoListName(video, teamBName),
+        start: video.start
+      }))
+    ]
+    const sortedNames = combined
+      .sort((a, b) => a.start - b.start)
+      .map(item => item.name)
+    const toSave = sortedNames.join('\n')
     const blob = new Blob([toSave], { type: 'text/plain' })
     const link = document.createElement('a')
     link.href = URL.createObjectURL(blob)
