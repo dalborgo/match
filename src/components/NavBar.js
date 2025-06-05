@@ -55,15 +55,13 @@ const NavBar = () => {
             )
           }
           {
-            (location.pathname.includes('/team') || location.pathname.includes('/game')) &&
             (
               <Button
-                color={location.pathname.includes('/game') ? 'secondary' : 'inherit'}
+                color={location.pathname.includes('/images') ? 'secondary' : 'inherit'}
                 component={Link}
-                to={`/game/${id}`}
-                state={{ ...state, teamName }}
+                to={'/images'}
               >
-                Game
+                Immagini
               </Button>
             )
           }

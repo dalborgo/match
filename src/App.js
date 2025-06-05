@@ -10,6 +10,7 @@ import History from './views/History'
 import { envConfig } from './init'
 import axios from 'axios'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import Images from './views/Images'
 
 const PORT = envConfig['BACKEND_PORT']
 const HOST = envConfig['BACKEND_HOST']
@@ -53,6 +54,7 @@ function App () {
               <Route path="/game/:id" element={<Game/>}/>
               <Route path="/referee" element={<Referee/>}/>
               <Route path="/referee/:refId" element={<Referee/>}/>
+              <Route path="/images" element={<Images/>}/>
             </Routes>
           </Box>
         </Router>
