@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from 'react'
 import { Box, TextField, Typography } from '@mui/material'
-import imageLinks from '../files/images.json'
+import imageLinks from '../files/image.json'
 import citiesByName from '../files/referee.json'
 
 const normalize = str =>
