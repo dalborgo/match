@@ -61,7 +61,7 @@ const NavBar = () => {
                 component={Link}
                 to={'/images'}
               >
-                Immagini
+                Images
               </Button>
             )
           }
