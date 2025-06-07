@@ -57,11 +57,11 @@ const NavBar = () => {
           {
             (
               <Button
-                color={location.pathname.includes('/images') ? 'secondary' : 'inherit'}
+                color={location.pathname.includes('/image') ? 'secondary' : 'inherit'}
                 component={Link}
-                to={'/images'}
+                to={'/image'}
               >
-                Images
+                Image
               </Button>
             )
           }

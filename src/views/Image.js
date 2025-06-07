@@ -155,7 +155,7 @@ const GameTab = () => {
   )
 }
 
-const Images = () => {
+const Image = () => {
   const [tab, setTab] = useState(0)
   
   return (
@@ -170,4 +170,4 @@ const Images = () => {
   )
 }
 
-export default Images
+export default Image
