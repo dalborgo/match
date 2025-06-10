@@ -312,7 +312,8 @@ const Home = () => {
                             .replace('<span>(Rinviata)</span>', 'rinv.')
                             .replace('<span>(Cancelled)</span>', 'canc.')
                             .replace('<span>(Postponed)</span>', 'canc.')
-                            .replace('<span>(Non disputata)</span>', 'canc.')}
+                            .replace('<span>(Non disputata)</span>', 'canc.')
+                            .replace('<span>(P)</span>', ' (P)')}
                         </Tooltip>
                       )
                       :
@@ -321,6 +322,7 @@ const Home = () => {
                         .replace('<span>(Cancelled)</span>', 'canc.')
                         .replace('<span>(Postponed)</span>', 'post.')
                         .replace('<span>(Non disputata)</span>', 'canc.')
+                        .replace('<span>(P)</span>', ' (P)')}
                     }
                   </Link>
                   <Typography
