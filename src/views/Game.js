@@ -80,7 +80,7 @@ function Game () {
     if (!currentPlayer) return
     
     const correctAnswer = currentPlayer.shirtNumber
-    const userAnswer = parseInt(userInput)
+    const userAnswer = parseInt(userInput, 10)
     
     if (userAnswer === correctAnswer) {
       setResult(true)
