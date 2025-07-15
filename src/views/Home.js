@@ -291,38 +291,40 @@ const Home = () => {
                       fontSize: 15,
                     }}
                   >
-                    {match['matchStats']?.xgAway ? (
-                        <Tooltip
-                          placement="top"
-                          title={
-                            <div>
-                              <span
-                                style={{ color: 'orange' }}>{`${match['matchStats']?.possessionHome?.toFixed(2)}%`}</span>
-                              &nbsp;&nbsp;
-                              <span style={{ color: 'cyan' }}>{`${match['matchStats']?.xgHome}`}</span> /&nbsp;
-                              <span style={{ color: 'cyan' }}>{`${match['matchStats']?.xgAway}`}</span>
-                              &nbsp;&nbsp;
-                              <span
-                                style={{ color: 'orange' }}>{`${match['matchStats']?.possessionAway?.toFixed(2)}%`}</span>
-                            </div>
-                          }
-                          enterDelay={1000}
-                        >
-                          {match?.separator
-                            .replace('<span>(Rinviata)</span>', 'rinv.')
-                            .replace('<span>(Cancelled)</span>', 'canc.')
-                            .replace('<span>(Postponed)</span>', 'canc.')
-                            .replace('<span>(Non disputata)</span>', 'canc.')
-                            .replace('<span>(P)</span>', ' (P)')}
-                        </Tooltip>
-                      )
-                      :
-                      match?.separator
-                        .replace('<span>(Rinviata)</span>', 'rinv.')
-                        .replace('<span>(Cancelled)</span>', 'canc.')
-                        .replace('<span>(Postponed)</span>', 'post.')
-                        .replace('<span>(Non disputata)</span>', 'canc.')
-                        .replace('<span>(P)</span>', ' (P)')}
+                    {
+                      match['matchStats']?.xgAway ?
+                        (
+                          <Tooltip
+                            placement="top"
+                            title={
+                              <div>
+                                <span
+                                  style={{ color: 'orange' }}>{`${match['matchStats']?.possessionHome?.toFixed(2)}%`}</span>
+                                &nbsp;&nbsp;
+                                <span style={{ color: 'cyan' }}>{`${match['matchStats']?.xgHome}`}</span> /&nbsp;
+                                <span style={{ color: 'cyan' }}>{`${match['matchStats']?.xgAway}`}</span>
+                                &nbsp;&nbsp;
+                                <span
+                                  style={{ color: 'orange' }}>{`${match['matchStats']?.possessionAway?.toFixed(2)}%`}</span>
+                              </div>
+                            }
+                            enterDelay={1000}
+                          >
+                            {match?.separator
+                              .replace('<span>(Rinviata)</span>', 'rinv.')
+                              .replace('<span>(Cancelled)</span>', 'canc.')
+                              .replace('<span>(Postponed)</span>', 'canc.')
+                              .replace('<span>(Non disputata)</span>', 'canc.')
+                              .replace('<span>(P)</span>', ' (P)')}
+                          </Tooltip>
+                        )
+                        :
+                        match?.separator
+                          .replace('<span>(Rinviata)</span>', 'rinv.')
+                          .replace('<span>(Cancelled)</span>', 'canc.')
+                          .replace('<span>(Postponed)</span>', 'post.')
+                          .replace('<span>(Non disputata)</span>', 'canc.')
+                          .replace('<span>(P)</span>', ' (P)')
                     }
                   </Link>
                   <Typography
