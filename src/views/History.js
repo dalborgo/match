@@ -19,7 +19,7 @@ const extractDate = (str, raw) => {
   }
   return ''
 }
-
+const formatDay = input => input?.replace(/\s*\d{2}\/\d{2}/, '')
 const sortByExtractedDateDesc = arr => {
   return arr?.sort((a, b) => {
     const dateA = extractDate(a.title, true)
@@ -44,7 +44,7 @@ const tableColumnExtensions = [
 ]
 
 const columns = [
-  { name: 'GIOR', title: 'Giornata' },
+  { name: 'GIOR', title: 'Giornata', getCellValue: row => formatDay(row['GIOR']) },
   { name: 'title', title: 'Data', getCellValue: row => extractDate(row.title) },
   { name: 'GARA', title: 'Gara' },
   { name: 'TORN', title: 'Torneo' },
