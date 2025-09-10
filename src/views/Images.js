@@ -8,13 +8,21 @@ const normalize = str =>
   str.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().trim()
 
 const getCity = nameFromFile => {
-  const normalizedFromFile = normalize(nameFromFile)
-  const parts = normalizedFromFile.split(' ')
-  if (parts.length < 2) return null
-  const reversed = normalize(`${parts[1]} ${parts[0]}`)
+  const normalized = normalize(nameFromFile)
+  const parts = normalized.split(' ').filter(Boolean)
+  if (parts.length < 2) {
+    return null
+  }
+  const candidates = new Set()
+  for (let i = 1; i < parts.length; i++) {
+    const first = parts.slice(0, i).join(' ')
+    const last = parts.slice(i).join(' ')
+    candidates.add(`${first} ${last}`)
+    candidates.add(`${last} ${first}`)
+  }
   for (const fullName in citiesByName) {
-    const normalizedJsonKey = normalize(fullName)
-    if (normalizedJsonKey === normalizedFromFile || normalizedJsonKey === reversed) {
+    const key = normalize(fullName)
+    if (candidates.has(key)) {
       return citiesByName[fullName]
     }
   }
