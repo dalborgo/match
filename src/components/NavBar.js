@@ -46,6 +46,18 @@ const NavBar = () => {
           {
             (
               <Button
+                color={location.pathname.includes('/game') ? 'secondary' : 'inherit'}
+                component={Link}
+                to={`/game/${id}`}
+                state={{ ...state, teamName }}
+              >
+                Game
+              </Button>
+            )
+          }
+          {
+            (
+              <Button
                 color={location.pathname.includes('/referee') ? 'secondary' : 'inherit'}
                 component={Link}
                 to={'/referee'}
