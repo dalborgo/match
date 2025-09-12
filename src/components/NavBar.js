@@ -44,6 +44,7 @@ const NavBar = () => {
             )
           }
           {
+            (location.pathname.includes('/team') || location.pathname.includes('/game')) &&
             (
               <Button
                 color={location.pathname.includes('/game') ? 'secondary' : 'inherit'}
