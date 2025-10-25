@@ -90,8 +90,11 @@ const tableColumnExtensions = [
 const copyTeam = rows => {
   let toCopy = ''
   for (let row of rows.sort((a, b) => compareByRole(a.roleAShort, b.roleAShort))) {
+    const { stats = {} } = row
+    const mof = stats['minutes_on_field'] || '--'
     if (!row.roleAShort && row.shirtNumber) {continue}
-    toCopy += `${row.shirtNumber ? row.shirtNumber + '\n' : ''}${getLastName(row.title)}\n${ROLES[row.roleAShort] || 'Allenatore'}\n\n`
+    const isCoach = Boolean(ROLES[row.roleAShort])
+    toCopy += `${row.shirtNumber ? row.shirtNumber + '\n' : ''}${getLastName(row.title)}\n${ROLES[row.roleAShort] || 'Allenatore'}\n${!isCoach ? `Minuti: ${mof}` : ''}\n\n`
   }
   return toCopy
 }
