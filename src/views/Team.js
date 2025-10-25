@@ -93,8 +93,8 @@ const copyTeam = rows => {
     const { stats = {} } = row
     const mof = stats['minutes_on_field'] || '--'
     if (!row.roleAShort && row.shirtNumber) {continue}
-    const isCoach = Boolean(ROLES[row.roleAShort])
-    toCopy += `${row.shirtNumber ? row.shirtNumber + '\n' : ''}${getLastName(row.title)}\n${ROLES[row.roleAShort] || 'Allenatore'}\n${!isCoach ? `Minuti: ${mof}` : ''}\n\n`
+    const isCoach = !ROLES[row.roleAShort]
+    toCopy += `${row.shirtNumber ? row.shirtNumber + '\n' : ''}${getLastName(row.title)}\n${ROLES[row.roleAShort] || 'Allenatore'}\n${isCoach ? '' : `Minuti: ${mof}`}\n\n`
   }
   return toCopy
 }
