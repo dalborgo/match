@@ -38,12 +38,34 @@ const getColor = group => {
   }
 }
 
-export const getVideoListName = (video, teamAName) => {
-  const name = `${video['date'] ? `${video['date']}_` : ''}${teamAName}_${video['stat']}${video['player'] ? `_${video['player']}${video['time'] ? `_${video['time']}` : ''}` : ''}`
+function secondsToHms (seconds) {
+  const h = Math.floor(seconds / 3600)
+  const m = Math.floor((seconds % 3600) / 60)
+  const s = seconds % 60
+  
+  const hh = h
+  const mm = m.toString().padStart(2, '0')
+  const ss = s.toString().padStart(2, '0')
+  
+  return `${hh}:${mm}:${ss}`
+}
+
+export const getVideoListName = (video, teamAName, referee) => {
+  const name = `${video['date'] ? `${video['date']}_` : ''}${teamAName}_${video['stat']}${video['player'] ? `_${video['player']}${video['time'] ? `_${secondsToHms(video['start'])}_${video['time']}` : ''}` : ''}_${referee}`
   return `nm=${video['link']}\ndr=20\nft=57\ntt=${name}\nbr!`
 }
 
-export function DownloadPdfButton ({ matchId, teamAId, teamBId, teamAName, teamBName, stat, children, style = {} }) {
+export function DownloadPdfButton ({
+  matchId,
+  teamAId,
+  teamBId,
+  teamAName,
+  teamBName,
+  referee,
+  stat,
+  children,
+  style = {}
+}) {
   const queryClient = useQueryClient()
   const downloadPdf = async () => {
     const [dataA, dataB] = await queryClient.fetchQuery({
@@ -58,11 +80,11 @@ export function DownloadPdfButton ({ matchId, teamAId, teamBId, teamAName, teamB
     })
     const combined = [
       ...dataA.results.map(video => ({
-        name: getVideoListName(video, teamAName),
+        name: getVideoListName(video, teamAName, referee),
         start: video.start
       })),
       ...dataB.results.map(video => ({
-        name: getVideoListName(video, teamBName),
+        name: getVideoListName(video, teamBName, referee),
         start: video.start
       }))
     ]
@@ -94,13 +116,12 @@ export function DownloadPdfButton ({ matchId, teamAId, teamBId, teamAName, teamB
   )
 }
 
-export function DownloadPdfButtonList ({ list, stat, stat2 = 'penalty_fouls', children, style = {} }) {
+export function DownloadPdfButtonList ({ list, stat, stat2 = 'penalty_fouls', children, matchList, style = {} }) {
   const queryClient = useQueryClient()
-  
   const downloadPdf = async () => {
     let allVideosList = []
     try {
-      const promises = list.map((match) => {
+      const promises = list.map(match => {
         const { teamAId, teamBId, matchId, teamAName, teamBName } = match
         return queryClient.fetchQuery({
           queryKey: [`video/${teamAId}${teamBId}/match/${matchId}`, { stat }],
@@ -114,8 +135,9 @@ export function DownloadPdfButtonList ({ list, stat, stat2 = 'penalty_fouls', ch
           },
           meta: { isManualFetching: true }
         }).then(([dataA, dataB]) => {
-          const outputA = dataA.results.map((video) => getVideoListName(video, teamAName))
-          const outputB = dataB.results.map((video) => getVideoListName(video, teamBName))
+          const referee = matchList.find(row => row['teamAName'] === teamAName)?.['referee'] ?? ''
+          const outputA = dataA.results.map((video) => getVideoListName(video, teamAName, referee))
+          const outputB = dataB.results.map((video) => getVideoListName(video, teamBName, referee))
           return [...outputA, ...outputB]
         })
       })
@@ -380,6 +402,7 @@ const Home = () => {
                       teamBName={match['teamBName']}
                       teamAId={teamIdCode[match['teamAName']]}
                       teamBId={teamIdCode[match['teamBName']]}
+                      referee={match['referee']}
                       stat="yellow_cards"
                     >
                       <Tooltip placement="left"
@@ -397,6 +420,7 @@ const Home = () => {
                       teamBName={match['teamBName']}
                       teamAId={teamIdCode[match['teamAName']]}
                       teamBId={teamIdCode[match['teamBName']]}
+                      referee={match['referee']}
                       stat="red_cards"
                     >
                       <Tooltip placement="left"
@@ -413,6 +437,7 @@ const Home = () => {
                       teamBName={match['teamBName']}
                       teamAId={teamIdCode[match['teamAName']]}
                       teamBId={teamIdCode[match['teamBName']]}
+                      referee={match['referee']}
                       stat="fouls"
                     >
                       <Tooltip placement="left"
@@ -455,17 +480,18 @@ const Home = () => {
             onClick={() => refetch()}>
             ↻
           </Link>&nbsp;&nbsp;&nbsp;
-          <DownloadPdfButtonList list={totalGames} stat="offsides"><span
+          <DownloadPdfButtonList list={totalGames} stat="offsides" matchList={list}><span
             style={{ color: 'cyan', fontSize: 'small' }}>O</span></DownloadPdfButtonList>&nbsp;&nbsp;&nbsp;
-          <DownloadPdfButtonList list={totalPenalties} stat="fouls"><span
+          <DownloadPdfButtonList list={totalPenalties} stat="fouls" matchList={list}><span
             style={{ color: 'cyan', fontSize: 'small' }}>P</span></DownloadPdfButtonList>&nbsp;&nbsp;&nbsp;
-          <DownloadPdfButtonList list={totalYellowCards} stat="yellow_card" stat2="out_of_play_fouls"><span
+          <DownloadPdfButtonList list={totalYellowCards} stat="yellow_card" stat2="out_of_play_fouls"
+                                 matchList={list}><span
             style={{ color: 'yellow', fontSize: 'small' }}>O</span></DownloadPdfButtonList>&nbsp;&nbsp;&nbsp;
-          <DownloadPdfButtonList list={totalYellowCards} stat="yellow_card" stat2="protest_fouls"><span
+          <DownloadPdfButtonList list={totalYellowCards} stat="yellow_card" stat2="protest_fouls" matchList={list}><span
             style={{ color: 'yellow', fontSize: 'small' }}>P</span></DownloadPdfButtonList>&nbsp;&nbsp;&nbsp;
-          <DownloadPdfButtonList list={totalYellowCards} stat="yellow_cards"><span
+          <DownloadPdfButtonList list={totalYellowCards} stat="yellow_cards" matchList={list}><span
             style={{ color: 'yellow', fontSize: 'small' }}>█</span></DownloadPdfButtonList>&nbsp;&nbsp;&nbsp;
-          <DownloadPdfButtonList list={totalRedCards} stat="red_cards"><span
+          <DownloadPdfButtonList list={totalRedCards} stat="red_cards" matchList={list}><span
             style={{ color: 'red', fontSize: 'small' }}>█</span></DownloadPdfButtonList>
         </Box>
       </Box>
