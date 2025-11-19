@@ -99,7 +99,7 @@ const copyTeam = rows => {
   return toCopy
 }
 
-function SpecialDownload ({ playerId, children, style = {} }) {
+function SpecialDownload ({ playerId, children, style = {}, selectorId = '119' }) {
   const queryClient = useQueryClient()
   
   const downloadPdf = async () => {
@@ -109,7 +109,7 @@ function SpecialDownload ({ playerId, children, style = {} }) {
         queryKey: [`best/${playerId}`],
         queryFn: async () => {
           const dtk = document.getElementById('dtk')?.value
-          const responseA = await axios.get(`http://${HOST}:${PORT}/wyscout/best/${playerId}?dtk=${dtk}`)
+          const responseA = await axios.get(`http://${HOST}:${PORT}/wyscout/best/${playerId}/${selectorId}?dtk=${dtk}`)
           return [responseA.data]
         },
         meta: { isManualFetching: true }
@@ -341,7 +341,19 @@ const Team = () => {
           style={combinedStyle}
           {...otherProps}
         >
-          <SpecialDownload playerId={row.id} style={{ color: 'white' }}>
+          <SpecialDownload playerId={row.id} style={{ color: 'white' }} selectorId="119">
+            {value}
+          </SpecialDownload>
+        </VirtualTable.Cell>
+      )
+    }
+    if (column.name === 'protest_foul') {
+      return (
+        <VirtualTable.Cell
+          style={combinedStyle}
+          {...otherProps}
+        >
+          <SpecialDownload playerId={row.id} style={{ color: 'yellow' }} selectorId="63">
             {value}
           </SpecialDownload>
         </VirtualTable.Cell>
