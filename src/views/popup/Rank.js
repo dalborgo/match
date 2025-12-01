@@ -178,13 +178,13 @@ function DownloadPdfButton ({ matchId }) {
   )
 }
 
-const DownloadVideo = ({ videoA, videoB, teamAName, teamBName }) => {
+const DownloadVideo = ({ videoA, videoB, teamAName, teamBName, referee }) => {
   const handleDownload = () => {
     const outputA = videoA.map(video => {
-      return getVideoListName(video, teamAName)
+      return getVideoListName(video, teamAName, referee)
     })
     const outputB = videoB.map(video => {
-      return getVideoListName(video, teamBName)
+      return getVideoListName(video, teamBName, referee)
     })
     const toSave = [...outputA, ...outputB].join('\n')
     const blob = new Blob([toSave], { type: 'text/plain' })
@@ -270,8 +270,11 @@ const Rank = ({ rank }) => {
     queryKey: [`download/${hasResult ? matchId : 0}`, { teamAId: match.teamAId, teamBId: match.teamBId }],
     staleTime: 5000,
   })
+  console.log('match:', match)
+  console.log('match:', match)
   if (isPending) {return null}
   const currentRank = rank?.find(rank => rank.roundName.includes(match.group))
+  console.log('download.results:', download.results)
   const { videoA, videoB, schemaA, schemaB } = download.results
   return (
     <Modal
@@ -310,7 +313,8 @@ const Rank = ({ rank }) => {
               hasResult &&
               <DownloadPdfButton matchId={matchId}/>
             }
-            <DownloadVideo videoA={videoA} videoB={videoB} teamAName={match.teamAName} teamBName={match.teamBName}/>
+            <DownloadVideo videoA={videoA} videoB={videoB} teamAName={match.teamAName} teamBName={match.teamBName}
+                           referee={match.referee}/>
             <IconButton onClick={() => navigate('/')}><CloseIcon/></IconButton>
           </Box>
           <Box display="flex">

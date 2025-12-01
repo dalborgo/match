@@ -51,7 +51,7 @@ function secondsToHms (seconds) {
 }
 
 export const getVideoListName = (video, teamAName, referee) => {
-  const name = `${video['date'] ? `${video['date']}_` : ''}${teamAName}_${video['stat']}${video['player'] ? `_${video['player']}${video['time'] ? `_${secondsToHms(video['start'])}_${video['time']}` : ''}` : ''}_${referee}`
+  const name = `${video['date'] ? `${video['date']}_` : ''}${teamAName}_${video['stat']}${video['player'] ? `_${video['player']}${video['time'] ? `_${secondsToHms(video['start'])}_${video['time']}` : ''}` : ''}${referee ? `_${referee}` : ''}`
   return `nm=${video['link']}\ndr=20\nft=57\ntt=${name}\nbr!`
 }
 
