@@ -270,11 +270,8 @@ const Rank = ({ rank }) => {
     queryKey: [`download/${hasResult ? matchId : 0}`, { teamAId: match.teamAId, teamBId: match.teamBId }],
     staleTime: 5000,
   })
-  console.log('match:', match)
-  console.log('match:', match)
   if (isPending) {return null}
   const currentRank = rank?.find(rank => rank.roundName.includes(match.group))
-  console.log('download.results:', download.results)
   const { videoA, videoB, schemaA, schemaB } = download.results
   return (
     <Modal
