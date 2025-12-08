@@ -50,8 +50,28 @@ function secondsToHms (seconds) {
   return `${hh}:${mm}:${ss}`
 }
 
+function buildVideoName (video, teamAName, referee) {
+  let parts = []
+  if (video.date) {
+    parts.push(video.date)
+  }
+  parts.push(teamAName)
+  parts.push(video.stat)
+  if (video.player) {
+    parts.push(video.player)
+    if (video.time) {
+      parts.push(secondsToHms(video.start))
+      parts.push(video.time)
+    }
+  }
+  if (referee) {
+    parts.push(referee)
+  }
+  return parts.join('_')
+}
+
 export const getVideoListName = (video, teamAName, referee) => {
-  const name = `${video['date'] ? `${video['date']}_` : ''}${teamAName}_${video['stat']}${video['player'] ? `_${video['player']}${video['time'] ? `_${secondsToHms(video['start'])}_${video['time']}` : ''}` : ''}${referee ? `_${referee}` : ''}`
+  const name = buildVideoName(video, teamAName, referee)
   return `nm=${video['link']}\ndr=20\nft=57\ntt=${name}\nbr!`
 }
 
@@ -80,10 +100,12 @@ export function DownloadPdfButton ({
     })
     const combined = [
       ...dataA.results.map(video => ({
+        label: buildVideoName(video, teamAName, referee),
         name: getVideoListName(video, teamAName, referee),
         start: video.start
       })),
       ...dataB.results.map(video => ({
+        label: buildVideoName(video, teamBName, referee),
         name: getVideoListName(video, teamBName, referee),
         start: video.start
       }))
@@ -92,6 +114,11 @@ export function DownloadPdfButton ({
       .sort((a, b) => a.start - b.start)
       .map(item => item.name)
     const toSave = sortedNames.join('\n')
+    const sortedCopies = combined
+      .sort((a, b) => a.start - b.start)
+      .map(item => item.label)
+    const toCopy = sortedCopies.join('\n')
+    await navigator.clipboard.writeText(toCopy)
     const blob = new Blob([toSave], { type: 'text/plain' })
     const link = document.createElement('a')
     link.href = URL.createObjectURL(blob)
@@ -119,7 +146,7 @@ export function DownloadPdfButton ({
 export function DownloadPdfButtonList ({ list, stat, stat2 = 'penalty_fouls', children, matchList, style = {} }) {
   const queryClient = useQueryClient()
   const downloadPdf = async () => {
-    let allVideosList = []
+    let allVideosList = [], allLabelsList = []
     try {
       const promises = list.map(match => {
         const { teamAId, teamBId, matchId, teamAName, teamBName } = match
@@ -136,17 +163,25 @@ export function DownloadPdfButtonList ({ list, stat, stat2 = 'penalty_fouls', ch
           meta: { isManualFetching: true }
         }).then(([dataA, dataB]) => {
           const referee = matchList.find(row => row['teamAName'] === teamAName)?.['referee'] ?? ''
-          const outputA = dataA.results.map((video) => getVideoListName(video, teamAName, referee))
-          const outputB = dataB.results.map((video) => getVideoListName(video, teamBName, referee))
-          return [...outputA, ...outputB]
+          const videosA = dataA.results.map((video) => getVideoListName(video, teamAName, referee))
+          const videosB = dataB.results.map((video) => getVideoListName(video, teamBName, referee))
+          const labelsA = dataA.results.map(video => buildVideoName(video, teamAName, referee))
+          const labelsB = dataB.results.map(video => buildVideoName(video, teamBName, referee))
+          return {
+            videos: [...videosA, ...videosB],
+            labels: [...labelsA, ...labelsB]
+          }
         })
       })
       const results = await Promise.all(promises)
-      allVideosList = results.flat()
+      allVideosList = results.flatMap(item => item.videos)
+      allLabelsList = results.flatMap(item => item.labels)
     } catch (error) {
       console.error('Errore durante il fetch dei dati:', error)
     }
     const toSave = allVideosList.join('\n')
+    const toCopy = allLabelsList.join('\n')
+    await navigator.clipboard.writeText(toCopy)
     const blob = new Blob([toSave], { type: 'text/plain' })
     const link = document.createElement('a')
     link.href = URL.createObjectURL(blob)
