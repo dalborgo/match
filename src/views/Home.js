@@ -38,6 +38,24 @@ const getColor = group => {
   }
 }
 
+function copyToClipboard (text) {
+  if (navigator.clipboard && window.isSecureContext) {
+    return navigator.clipboard.writeText(text)
+  } else {
+    const textarea = document.createElement('textarea')
+    textarea.value = text
+    textarea.style.position = 'fixed'
+    textarea.style.left = '-9999px'
+    document.body.appendChild(textarea)
+    textarea.select()
+    try {
+      document.execCommand('copy')
+    } finally {
+      document.body.removeChild(textarea)
+    }
+  }
+}
+
 function secondsToHms (seconds) {
   const h = Math.floor(seconds / 3600)
   const m = Math.floor((seconds % 3600) / 60)
@@ -118,7 +136,7 @@ export function DownloadPdfButton ({
       .sort((a, b) => a.start - b.start)
       .map(item => item.label)
     const toCopy = sortedCopies.join('\n')
-    await navigator.clipboard.writeText(toCopy)
+    copyToClipboard(toCopy)
     const blob = new Blob([toSave], { type: 'text/plain' })
     const link = document.createElement('a')
     link.href = URL.createObjectURL(blob)
@@ -181,7 +199,7 @@ export function DownloadPdfButtonList ({ list, stat, stat2 = 'penalty_fouls', ch
     }
     const toSave = allVideosList.join('\n')
     const toCopy = allLabelsList.join('\n')
-    await navigator.clipboard.writeText(toCopy)
+    copyToClipboard(toCopy)
     const blob = new Blob([toSave], { type: 'text/plain' })
     const link = document.createElement('a')
     link.href = URL.createObjectURL(blob)
