@@ -181,8 +181,8 @@ export function DownloadPdfButtonList ({ list, stat, stat2 = 'penalty_fouls', ch
           meta: { isManualFetching: true }
         }).then(([dataA, dataB]) => {
           const referee = matchList.find(row => row['teamAName'] === teamAName)?.['referee'] ?? ''
-          const videosA = dataA.results.map((video) => getVideoListName(video, teamAName, referee))
-          const videosB = dataB.results.map((video) => getVideoListName(video, teamBName, referee))
+          const videosA = dataA.results.map(video => getVideoListName(video, teamAName, referee))
+          const videosB = dataB.results.map(video => getVideoListName(video, teamBName, referee))
           const labelsA = dataA.results.map(video => buildVideoName(video, teamAName, referee))
           const labelsB = dataB.results.map(video => buildVideoName(video, teamBName, referee))
           return {
