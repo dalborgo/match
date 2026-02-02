@@ -132,6 +132,7 @@ export function DownloadPdfButton ({
       .sort((a, b) => a.start - b.start)
       .map(item => item.name)
     const toSave = sortedNames.join('\n')
+    console.log('toSave:', toSave)
     const sortedCopies = combined
       .sort((a, b) => a.start - b.start)
       .map(item => item.label)
@@ -163,8 +164,25 @@ export function DownloadPdfButton ({
 
 export function DownloadPdfButtonList ({ list, stat, stat2 = 'penalty_fouls', children, matchList, style = {} }) {
   const queryClient = useQueryClient()
-  const downloadPdf = async () => {
-    let allVideosList = [], allLabelsList = []
+  const [copyText, setCopyText] = useState('')
+  const [showCopy, setShowCopy] = useState(false)
+  
+  const handleCopyClick = async (event) => {
+    event.preventDefault()
+    try {
+      await copyToClipboard(copyText)
+      setShowCopy(false)
+    } catch (error) {
+      console.error(error)
+    }
+  }
+  
+  const downloadPdf = async (event) => {
+    event.preventDefault()
+    
+    let allVideosList = []
+    let allLabelsList = []
+    
     try {
       const promises = list.map(match => {
         const { teamAId, teamBId, matchId, teamAName, teamBName } = match
@@ -191,15 +209,20 @@ export function DownloadPdfButtonList ({ list, stat, stat2 = 'penalty_fouls', ch
           }
         })
       })
+      
       const results = await Promise.all(promises)
       allVideosList = results.flatMap(item => item.videos)
       allLabelsList = results.flatMap(item => item.labels)
     } catch (error) {
       console.error('Errore durante il fetch dei dati:', error)
     }
+    
     const toSave = allVideosList.join('\n')
     const toCopy = allLabelsList.join('\n')
-    copyToClipboard(toCopy)
+    
+    setCopyText(toCopy)
+    setShowCopy(true)
+    
     const blob = new Blob([toSave], { type: 'text/plain' })
     const link = document.createElement('a')
     link.href = URL.createObjectURL(blob)
@@ -207,22 +230,42 @@ export function DownloadPdfButtonList ({ list, stat, stat2 = 'penalty_fouls', ch
     link.click()
     URL.revokeObjectURL(link.href)
   }
-  
-  return (
-    <Link
-      onClick={downloadPdf}
-      sx={{
-        ...style,
-        cursor: 'pointer',
-        textDecoration: 'none',
-        '&:hover': {
-          textDecoration: 'underline',
-          textDecorationColor: style.color
-        }
-      }}>
-      {children}
-    </Link>
-  )
+  if (showCopy) {
+    return (
+      <Link
+        onClick={handleCopyClick}
+        sx={{
+          ...style,
+          cursor: 'pointer',
+          textDecoration: 'none',
+          fontSize: 'small',
+          '&:hover': {
+            textDecoration: 'underline',
+            textDecorationColor: style.color
+          }
+        }}
+      >
+        C
+      </Link>
+    )
+  } else {
+    return (
+      <Link
+        onClick={downloadPdf}
+        sx={{
+          ...style,
+          cursor: 'pointer',
+          textDecoration: 'none',
+          '&:hover': {
+            textDecoration: 'underline',
+            textDecorationColor: style.color
+          }
+        }}
+      >
+        {children}
+      </Link>
+    )
+  }
 }
 
 const Home = () => {
